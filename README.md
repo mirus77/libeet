@@ -11,9 +11,12 @@ Miroslav Kundela <mail@mirus.cz>
 Installation
 ---
 
-Compile OpenSSL, LibXML, LibXSLT, XMLSec.
+Compile OpenSSL, LibXML, LibXSLT, XMLSec. to C:\\Build\\VC12\\$(Platform)
 
 ```
-run win32/_buildtools.bat
+cd win32
+
+_buildtools.bat or _buildtoolsx64.bat
+
 cmd inside:/> buildall.bat
 ```
