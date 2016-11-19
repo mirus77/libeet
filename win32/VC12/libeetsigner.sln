@@ -1,0 +1,45 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2013 for Windows Desktop
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libeetsigner", "libeetsigner\libeetsigner.vcxproj", "{96E8066B-D2F4-4900-B900-6367CD5BA1C0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libeetsigner_a", "libeetsigner_a\libeetsigner_a.vcxproj", "{34BA7A5F-6409-40B5-BFD8-A948A70A88AF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testLibeet", "testLibeet\testLibeet.vcxproj", "{F7286C8D-CD6C-4B76-A453-5053D0EA0AF8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{96E8066B-D2F4-4900-B900-6367CD5BA1C0} = {96E8066B-D2F4-4900-B900-6367CD5BA1C0}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testLibeet_a", "testLibeet_a\testLibeet_a.vcxproj", "{029F3D3E-EB1A-4277-8724-FF76AF67661D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{34BA7A5F-6409-40B5-BFD8-A948A70A88AF} = {34BA7A5F-6409-40B5-BFD8-A948A70A88AF}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{96E8066B-D2F4-4900-B900-6367CD5BA1C0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{96E8066B-D2F4-4900-B900-6367CD5BA1C0}.Debug|Win32.Build.0 = Debug|Win32
+		{96E8066B-D2F4-4900-B900-6367CD5BA1C0}.Release|Win32.ActiveCfg = Release|Win32
+		{96E8066B-D2F4-4900-B900-6367CD5BA1C0}.Release|Win32.Build.0 = Release|Win32
+		{34BA7A5F-6409-40B5-BFD8-A948A70A88AF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{34BA7A5F-6409-40B5-BFD8-A948A70A88AF}.Debug|Win32.Build.0 = Debug|Win32
+		{34BA7A5F-6409-40B5-BFD8-A948A70A88AF}.Release|Win32.ActiveCfg = Release|Win32
+		{34BA7A5F-6409-40B5-BFD8-A948A70A88AF}.Release|Win32.Build.0 = Release|Win32
+		{F7286C8D-CD6C-4B76-A453-5053D0EA0AF8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F7286C8D-CD6C-4B76-A453-5053D0EA0AF8}.Debug|Win32.Build.0 = Debug|Win32
+		{F7286C8D-CD6C-4B76-A453-5053D0EA0AF8}.Release|Win32.ActiveCfg = Release|Win32
+		{F7286C8D-CD6C-4B76-A453-5053D0EA0AF8}.Release|Win32.Build.0 = Release|Win32
+		{029F3D3E-EB1A-4277-8724-FF76AF67661D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{029F3D3E-EB1A-4277-8724-FF76AF67661D}.Debug|Win32.Build.0 = Debug|Win32
+		{029F3D3E-EB1A-4277-8724-FF76AF67661D}.Release|Win32.ActiveCfg = Release|Win32
+		{029F3D3E-EB1A-4277-8724-FF76AF67661D}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

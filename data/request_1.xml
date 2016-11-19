@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<Trzba xmlns="http://fs.mfcr.cz/eet/schema/v3">
+  <Hlavicka uuid_zpravy="f4460e41-e768-4cc6-8ea7-4668f43d870a" dat_odesl="2016-11-09T18:47:19+01:00" prvni_zaslani="false" overeni="false"/>
+  <Data dic_popl="CZ00000019" id_provoz="273" id_pokl="/5546/RO24" porad_cis="0/6460/ZQ42" dat_trzby="2016-11-09T18:47:19+01:00" celk_trzba="34113.00" zakl_nepodl_dph="3036.00" zakl_dan1="-820.92" dan1="-172.39" zakl_dan2="-3538.20" dan2="-530.73" zakl_dan3="9756.46" dan3="975.65" cest_sluz="5460.00" pouzit_zboz1="784.00" pouzit_zboz2="967.00" pouzit_zboz3="189.00" urceno_cerp_zuct="324.00" cerp_zuct="679.00" rezim="0"/>
+  <KontrolniKody>
+    <pkp cipher="RSA2048" digest="SHA256" encoding="base64">V2F7jYx+gihBt8tBc8t94pLH6hlXV/7JSxJvvNCrORhCZy9YYhjoOT2YaWxH9y4tl6br4/3yN02lIlCGKJpzAavU5mfm5g+a86hdX1XVimzYOdUvw01ExtZ4Zz7t22MhHnjKu3g4l+XcR20DlwClSkiDiXk7cvLRADfDEUU6W8Tc6SeOggL0QbfEYZDYIuSG/qll5shWA8XprhR9gvjADiL2pna2B5pWP5A5W7fBFX3mn9hjB5CF/ro8semhm/3xJcG06j0hvkszxfC9f9+5u4UG/ajIQ9aiRq7tqaq2AAsiSkmCs4OtY/cSkv8GMAbsjXZPq5V2m1bTp7vR2zUeug==</pkp>
+    <bkp digest="SHA1" encoding="base16">CCE25816-2C03B818-709AEA39-60C3752B-719BE75B</bkp>
+  </KontrolniKody>
+</Trzba>
+    

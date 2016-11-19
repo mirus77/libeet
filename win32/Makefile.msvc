@@ -1,0 +1,311 @@
+# Makefile for xmlsec, specific for Windows, MSVC and NMAKE.
+#
+# Take a look at the beginning and modify the variables to suit your 
+# environment. Having done that, you can do a
+#
+# nmake [all]     to build the xmlsec and the accompanying utilities.
+# nmake clean     to remove all compiler output files and return to a
+#                 clean state.
+# nmake rebuild   to rebuild everything from scratch. This basically does
+#                 a 'nmake clean' and then a 'nmake all'.
+# nmake install   to install the library and its header files.
+#
+# March 2002, Igor Zlatkovic <igor@stud.fh-frankfurt.de>
+#	Created for LibXML and LibXSLT
+# April 2002, Aleksey Sanin <aleksey@aleksey.com>
+#	Modified for XMLSec Libary
+#
+
+AUTOCONF = .\configure.txt
+
+# If you cannot run the configuration script, which would take the burden of
+# editing this file from your back, then remove the following line...
+!include $(AUTOCONF)
+# ...and enable the following lines and adapt them to your environment.
+#BASEDIR = ..
+#LIBEET_SRCDIR = $(BASEDIR)\src
+#APPS_SRCDIR = $(BASEDIR)\apps
+#BINDIR = binaries
+#LIBEET_MAJOR_VERSION = 0 # set this to the right value.
+#LIBEET_MINOR_VERSION = 0 # set this to the right value.
+#LIBEET_MICRO_VERSION = 0 # set this to the right value.
+#WITH_LIBEET_DEBUG = 1
+#UNICODE = 1
+#DEBUG = 0
+#WITH_DL = 1
+#PREFIX = . # set this to the right value.
+#BINPREFIX = $(PREFIX)\bin
+#INCPREFIX = $(PREFIX)\include
+#LIBPREFIX = $(PREFIX)\lib
+#SOPREFIX = $(PREFIX)\lib
+#INCLUDE = $(INCLUDE);$(INCPREFIX)
+#LIB = $(LIB);$(LIBPREFIX) 
+
+# There should never be a need to modify anything below this line.
+# ----------------------------------------------------------------
+BUILDPREFIX=x86
+BDSUFFIX=win32
+
+!if "$(PLATFORM)" == "x64"
+BUILDPREFIX=x64
+BDSUFFIX=win64
+!endif
+
+!if "$(DEBUG)" == "1"
+BUILDCONFIG=debug
+!else
+BUILDCONFIG=release
+!endif
+
+BUILDPREFIX=$(BUILDPREFIX)\$(BUILDCONFIG)
+BINDIR=$(BUILDPREFIX)\$(BINDIR)
+
+#
+# Names of various input and output components.
+#
+APP_NAME  		= testLibeet.exe
+APP_NAME_A 		= testLibeet_a.exe
+
+APP_NAME_MANIFEST	= $(APP_NAME).manifest
+APP_NAME_A_MANIFEST	= $(APP_NAME_A).manifest
+
+LIBEET_NAME 		= libeet
+LIBEET_BASENAME 	= $(LIBEET_NAME)signer
+LIBEET_SO 		= $(LIBEET_BASENAME).dll
+LIBEET_SO_MANIFEST	= $(LIBEET_BASENAME).dll.manifest
+LIBEET_IMP 		= $(LIBEET_BASENAME).lib
+LIBEET_A 		= $(LIBEET_BASENAME)_a.lib
+
+#
+# Places where intermediate files produced by the compiler go
+#
+LIBEET_APPS_INTDIR      = $(BUILDPREFIX)\apps.int
+LIBEET_APPS_INTDIR_A    = $(BUILDPREFIX)\apps_a.int
+
+LIBEET_INTDIR           = $(BUILDPREFIX)\$(LIBEET_BASENAME).int
+LIBEET_INTDIR_A         = $(BUILDPREFIX)\$(LIBEET_BASENAME)_a.int
+
+#
+# Object files for libraries and apps.
+#
+LIBEET_APPS_OBJS = \
+	$(LIBEET_APPS_INTDIR)\TestLibeet.obj
+  
+LIBEET_APPS_OBJS_A = \
+	$(LIBEET_APPS_INTDIR_A)\TestLibeet.obj
+
+LIBEET_OBJS = \
+	$(LIBEET_INTDIR)\dllmain.obj\
+	$(LIBEET_INTDIR)\encodeutils.obj\
+	$(LIBEET_INTDIR)\libeetsigner.obj\
+	$(LIBEET_INTDIR)\stdafx.obj \
+	$(LIBEET_INTDIR)\keysmngr.obj \
+	$(LIBEET_INTDIR)\strings.obj \
+	$(LIBEET_INTDIR)\templates.obj \
+	$(LIBEET_INTDIR)\errors.obj \
+  $(LIBEET_INTDIR)\$(LIBEET_BASENAME).res
+LIBEET_OBJS_A = \
+	$(LIBEET_INTDIR_A)\encodeutils.obj\
+	$(LIBEET_INTDIR_A)\libeetsigner.obj\
+	$(LIBEET_INTDIR_A)\stdafx.obj \
+	$(LIBEET_INTDIR_A)\keysmngr.obj \
+	$(LIBEET_INTDIR_A)\strings.obj \
+	$(LIBEET_INTDIR_A)\errors.obj \
+	$(LIBEET_INTDIR_A)\templates.obj
+
+#
+# The preprocessor and its options.
+#
+CPP 			= cl.exe /EP
+CPPFLAGS 		= /nologo
+
+#
+# The compiler and its options.
+#
+CC 			= cl.exe
+!if "$(PLATFORM)" == "x64"
+CFLAGS 			= /nologo /D "WIN64" /D "_WINDOWS" 
+!else
+CFLAGS 			= /nologo /D "WIN32" /D "_WINDOWS" 
+!endif
+CFLAGS 			= $(CFLAGS) /D "_MBCS" /D "_REENTRANT"  /W1  
+CFLAGS 			= $(CFLAGS) /I$(BASEDIR) /I$(BASEDIR)\include
+CFLAGS 			= $(CFLAGS) /I$(INCPREFIX)
+CFLAGS 			= $(CFLAGS) /D PACKAGE=\"$(LIBEET_NAME)\" 
+CFLAGS 			= $(CFLAGS) /D "HAVE_STDIO_H" /D "HAVE_STDLIB_H"
+CFLAGS 			= $(CFLAGS) /D "HAVE_STRING_H" /D "HAVE_CTYPE_H"
+CFLAGS 			= $(CFLAGS) /D "HAVE_MALLOC_H" /D "HAVE_MEMORY_H"
+
+!if "$(UNICODE)" == "1"
+CFLAGS 			= $(CFLAGS) /D "UNICODE" /D "_UNICODE"
+!endif
+
+# Optimisation and debug symbols.
+!if "$(DEBUG)" == "1"
+CFLAGS 			= $(CFLAGS) /D "_DEBUG" /Od /Z7 /MDd 
+!else
+CFLAGS 			= $(CFLAGS) /D "NDEBUG" /O2 /MD
+!endif
+
+RSC=rc.exe
+
+APP_CFLAGS	= 
+APP_A_CFLAGS	= 
+
+#
+# The linker and its options.
+#
+LD 			    = link.exe
+LDFLAGS 		= /nologo 
+LDFLAGS 		= $(LDFLAGS) /LIBPATH:$(BINDIR) /LIBPATH:$(LIBPREFIX) /DYNAMICBASE 
+#/NODEFAULTLIB:"LIBCMT.lib"
+LIBS 		  	=
+APP_LIBS    = 
+
+# Optimisation and debug symbols.
+!if "$(DEBUG)" == "1"
+LDFLAGS 		= $(LDFLAGS) /DEBUG
+!else
+LDFLAGS 		= $(LDFLAGS) 
+#/OPT:NOWIN98
+!endif
+
+SOLIBS 			= $(LIBS) libxmlsec-openssl_a.lib libeay32_a.lib crypt32.lib libxmlsec_a.lib libxml2_a.lib libxslt_a.lib libexslt_a.lib wsock32.lib ws2_32.lib kernel32.lib user32.lib gdi32.lib advapi32.lib
+ALIBS 			= $(LIBS) libxmlsec_a.lib libxml2_a.lib libxslt_a.lib crypt32.lib
+APP_LIBS    = libeay32_a.lib libxmlsec-openssl_a.lib crypt32.lib kernel32.lib user32.lib gdi32.lib advapi32.lib
+
+# The archiver and its options.
+AR = link.exe /lib
+ARFLAGS = /nologo 
+#/NODEFAULTLIB:"LIBCMT.lib"
+
+
+#
+# Build rules
+#
+ 
+all : bannerbuild buildall
+
+buildall : libeetsigner libeetsignera apps
+
+bannerbuild:
+	@echo =====================
+	@echo Building libeetsigner
+  @echo Platform : $(PLATFORM)
+	@echo =====================
+
+bannerdistbin:
+	@echo =====================
+	@echo Binary distribution libeetsigner
+  @echo Platform : $(PLATFORM)
+	@echo =====================
+
+libeetsigner : $(LIBEET_APPS_INTDIR) $(BINDIR)\$(LIBEET_SO)
+
+libeetsignera :  $(LIBEET_APPS_INTDIR_A) $(BINDIR)\$(LIBEET_A)
+
+apps : $(BINDIR)\$(APP_NAME) $(BINDIR)\$(APP_NAME_A)
+
+clean :
+	if exist $(LIBEET_INTDIR) rmdir /S /Q $(LIBEET_INTDIR)
+	if exist $(LIBEET_INTDIR_A) rmdir /S /Q $(LIBEET_INTDIR_A)
+	if exist $(LIBEET_APPS_INTDIR) rmdir /S /Q $(LIBEET_APPS_INTDIR)
+	if exist $(LIBEET_APPS_INTDIR_A) rmdir /S /Q $(LIBEET_APPS_INTDIR_A)
+	if exist $(BINDIR) rmdir /S /Q $(BINDIR)
+
+rebuild : clean all
+
+install : all
+	if not exist $(INCPREFIX)\$(LIBEET_NAME) mkdir $(INCPREFIX)\$(LIBEET_NAME)
+	if not exist $(BINPREFIX) mkdir $(BINPREFIX)
+	if not exist $(LIBPREFIX) mkdir $(LIBPREFIX)
+	if not exist $(PREFIX)\data mkdir $(PREFIX)\data
+	if exist $(BASEDIR)\include\$(LIBEET_NAME) copy $(BASEDIR)\include\$(LIBEET_NAME)\*.h $(INCPREFIX)\$(LIBEET_NAME)
+	if exist $(PREFIX)\data copy $(BASEDIR)\data\*.* $(PREFIX)\data
+	if exist $(BINDIR)\$(LIBEET_SO) copy $(BINDIR)\$(LIBEET_SO) $(SOPREFIX)
+	if exist $(BINDIR)\$(LIBEET_SO_MANIFEST) copy $(BINDIR)\$(LIBEET_SO_MANIFEST) $(SOPREFIX)
+	if exist $(BINDIR)\$(LIBEET_A) copy $(BINDIR)\$(LIBEET_A) $(LIBPREFIX)
+	if exist $(BINDIR)\$(LIBEET_IMP) copy $(BINDIR)\$(LIBEET_IMP) $(LIBPREFIX)
+	if exist $(BINDIR)\$(APP_NAME) copy $(BINDIR)\$(APP_NAME) $(BINPREFIX)
+	if exist $(BINDIR)\$(APP_NAME_A) copy $(BINDIR)\$(APP_NAME_A) $(BINPREFIX)
+	if exist $(BINDIR)\$(APP_NAME_MANIFEST) copy $(BINDIR)\$(APP_NAME_MANIFEST) $(BINPREFIX)
+	if exist $(BINDIR)\$(APP_NAME_A_MANIFEST) copy $(BINDIR)\$(APP_NAME_A_MANIFEST) $(BINPREFIX)
+
+uninstall :
+	if exist $(INCPREFIX)\$(LIBEET_NAME) rmdir /S /Q $(INCPREFIX)\$(LIBEET_NAME)
+	if exist $(SOPREFIX)\$(LIBEET_SO) del /F /S /Q $(SOPREFIX)\$(LIBEET_SO)
+	if exist $(SOPREFIX)\$(LIBEET_SO_MANIFEST) del /F /S /Q $(SOPREFIX)\$(LIBEET_SO)
+	if exist $(LIBPREFIX)\$(LIBEET_A) del /F /S /Q $(LIBPREFIX)\$(LIBEET_A)
+	if exist $(LIBPREFIX)\$(LIBEET_IMP) del /F /S /Q $(LIBPREFIX)\$(LIBEET_IMP)
+	if exist $(BINPREFIX)\$(APP_NAME) del /F /S /Q $(BINPREFIX)\$(APP_NAME)
+	if exist $(BINPREFIX)\$(APP_NAME_A) del /F /S /Q $(BINPREFIX)\$(APP_NAME_A)
+	if exist $(BINPREFIX)\$(APP_NAME_MANIFEST) del /F /S /Q $(BINPREFIX)\$(APP_NAME_MANIFEST)
+	if exist $(BINPREFIX)\$(APP_NAME_A_MANIFEST) del /F /S /Q $(BINPREFIX)\$(APP_NAME_A_MANIFEST)
+
+# This is a target for me, to make a binary distribution. Not for the public use,
+# keep your hands off :-)
+BDVERSION = $(LIBEET_VERSION_MAJOR).$(LIBEET_VERSION_MINOR).$(LIBEET_VERSION_SUBMINOR)
+BDPREFIX = $(LIBEET_BASENAME)-$(BDVERSION).$(BDSUFFIX)
+bindist : bannerdistbin buildall
+	$(MAKE) /nologo PREFIX=$(BDPREFIX) SOPREFIX=$(BDPREFIX)\bin install
+	cscript //NoLogo configure.js genreadme $(LIBEET_BASENAME) $(BDVERSION) $(BDSUFFIX) $(BDPREFIX)\readme.txt
+
+# Makes the compiler output directory.
+$(BUILDPREFIX) :
+	if not exist $(BUILDPREFIX) mkdir $(BUILDPREFIX)
+
+$(BINDIR) :
+	if not exist $(BUILDPREFIX) mkdir $(BUILDPREFIX)
+	if not exist $(BINDIR) mkdir $(BINDIR)
+
+# Makes intermediate directories.
+$(LIBEET_APPS_INTDIR) :
+	if not exist $(LIBEET_APPS_INTDIR) mkdir $(LIBEET_APPS_INTDIR)
+$(LIBEET_APPS_INTDIR_A) :
+	if not exist $(LIBEET_APPS_INTDIR_A) mkdir $(LIBEET_APPS_INTDIR_A)
+
+$(LIBEET_INTDIR) :
+	if not exist $(LIBEET_INTDIR) mkdir $(LIBEET_INTDIR)
+$(LIBEET_INTDIR_A) :
+	if not exist $(LIBEET_INTDIR_A) mkdir $(LIBEET_INTDIR_A)
+
+# An implicit rule for libEETSigner compilation.
+{$(APPS_SRCDIR)}.c{$(LIBEET_APPS_INTDIR)}.obj::
+	$(CC) $(CFLAGS) $(APP_CFLAGS) /Fo$(LIBEET_APPS_INTDIR)\ /c $<
+
+{$(LIBEET_SRCDIR)}.c{$(LIBEET_INTDIR)}.obj::
+	$(CC) $(CFLAGS) /Fo$(LIBEET_INTDIR)\ /c $<
+
+# An implicit rule for static xmlsec compilation.
+{$(APPS_SRCDIR)}.c{$(LIBEET_APPS_INTDIR_A)}.obj::
+	$(CC) /D "LIBEET_STATIC" \
+		$(CFLAGS) $(APP_CFLAGS_A) /Fo$(LIBEET_APPS_INTDIR_A)\ /c $<
+
+{$(LIBEET_SRCDIR)}.c{$(LIBEET_INTDIR_A)}.obj::
+	$(CC) /D "LIBEET_STATIC" \
+		$(CFLAGS) /Fo$(LIBEET_INTDIR_A)\ /c $<
+
+$(LIBEET_INTDIR)\$(LIBEET_BASENAME).res: version32.rc
+	$(RSC) /fo"$(LIBEET_INTDIR)\$(LIBEET_BASENAME).res" version32.rc
+
+# Compiles xmlsec source. Uses the implicit rule for commands.
+$(LIBEET_OBJS) : $(LIBEET_INTDIR) 
+$(LIBEET_OBJS_A) : $(LIBEET_INTDIR_A)
+
+# Creates the shared objects and archives.
+$(BINDIR)\$(LIBEET_SO) : $(BINDIR) $(BUILDPREFIX) $(LIBEET_INTDIR)\$(LIBEET_BASENAME).res $(LIBEET_OBJS)
+	$(LD) $(LDFLAGS) /DLL /VERSION:$(LIBEET_VERSION_MAJOR).$(LIBEET_VERSION_MINOR) \
+		/IMPLIB:$(BINDIR)\$(LIBEET_IMP) /OUT:$(BINDIR)\$(LIBEET_SO) \
+		$(LIBEET_OBJS) $(SOLIBS)
+$(BINDIR)\$(LIBEET_A) : $(BINDIR) $(BUILDPREFIX) $(LIBEET_OBJS_A)
+	$(AR) $(ARFLAGS) /OUT:$(BINDIR)\$(LIBEET_A) $(ALIBS) $(LIBEET_OBJS_A)
+
+# An implicit rule for xmlsec command line tool
+$(BINDIR)\$(APP_NAME): $(BINDIR) $(BUILDPREFIX) $(LIBEET_APPS_OBJS)
+	$(LD) $(LDFLAGS) /OUT:$@ $(LIBEET_IMP) $(APP_LIBS) $(LIBEET_APPS_OBJS)
+$(BINDIR)\$(APP_NAME_A): $(BINDIR) $(BUILDPREFIX) $(LIBEET_APPS_OBJS_A)
+	$(LD) $(LDFLAGS) /OUT:$@ $(LIBEET_A) $(APP_LIBS) $(LIBEET_APPS_OBJS_A)
+
+# Source dependences should be autogenerated somehow here, but how to
+# do it? I have no clue.
+
