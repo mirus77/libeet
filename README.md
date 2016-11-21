@@ -4,7 +4,7 @@ libEET library provides C wrapper compiled into one DLL file based on libxml2, x
 
 libEET is based on well known XMLSec (http://http://www.aleksey.com/xmlsec/), LibXML (http://xmlsoft.org), LibXSLT (http://xmlsoft.org/XSLT) and OpenSSL (http://www.openssl.org) libraries.
 
-This code is released under the MIT Licence see the Copyright file.
+This code is released under the LGPL Licence see the LICENCE file.
 
 Miroslav Kundela <mail@mirus.cz>
 
