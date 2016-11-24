@@ -18,3 +18,10 @@ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
  COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER 
  IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR 
  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ 
+This project using in binary distribution compiled with 3rd party libs
+
+XMLSec - http://www.aleksey.com/xmlsec/ under MIT licence
+libxml2 - http://xmlsoft.org/ under MIT licence
+libxslt - http://xmlsoft.org/XSLT/ under MIT licence
+openssl - http://www.openssl.org under licence at https://www.openssl.org/source/license.html

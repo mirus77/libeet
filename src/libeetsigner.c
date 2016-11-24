@@ -427,42 +427,53 @@ eetSignerMakeBKP(xmlSecKeysMngrPtr mngr, xmlChar * Data)
 #endif
 	xmlChar * s = eetSignerSignString(mngr, Data);
 
-	xmlChar *digest = eetSignerSHA1(s, SIGSIZE);
-	int digest_len = xmlStrlen(digest);
-
-	xmlChar * encoded_text = (xmlChar *)eetCalloc((digest_len * 2) + 1);
-	xmlChar * resout = (xmlChar *)eetCalloc((digest_len * 2) + 1 + 4);
-	if (eetSignerBase16Encode(digest, digest_len, encoded_text) != 1)
+	xmlSecByte ** digest = eetMalloc(sizeof(digest));
+	xmlSecSize digest_len = 0;
+	if (eetSignerSHA1(s, SIGSIZE, digest, &digest_len) == 0)
 	{
+		xmlChar * encoded_text = (xmlChar *)eetCalloc((digest_len * 2) + 1);
+		xmlChar * resout = (xmlChar *)eetCalloc((digest_len * 2) + 1 + 4);
+		if (eetSignerBase16Encode(*digest, digest_len, encoded_text) != 1)
+		{
 #if defined(DEBUG)
-		fprintf(stdout, "Base16Encode failed\n");
+			fprintf(stdout, "Base16Encode failed\n");
 #endif
-	}
-	
-	if (s != NULL)
-	{
-		eetFree(s);
-	}
+		}
+		if (s != NULL)
+		{
+			eetFree(s);
+		}
 
+		if (*digest != NULL)
+		{
+			eetFree(*digest);
+		}
+
+		if (digest != NULL)
+		{
+			eetFree(digest);
+		}
+
+		// normalize output for BKP
+		j = 0;
+		for (i = 0; i < xmlStrlen(encoded_text); i++)
+		{
+			if ((i == 8) || (i == 16) || (i == 24) || (i == 32))
+			{
+				resout[j] = '-';
+				j++;
+			}
+			resout[j] = encoded_text[i];
+			j++;
+		}
+
+		return (resout);
+	};
 	if (digest != NULL)
 	{
 		eetFree(digest);
 	}
-
-	// normalize output for BKP
-	j = 0;
-	for (i = 0; i < xmlStrlen(encoded_text); i++) 
-	{
-		if ((i == 8) || (i == 16) || (i == 24) || (i == 32))
-		{
-			resout[j] = '-';
-			j++;
-		}
-		resout[j] = encoded_text[i];
-		j++;
-	}
-
-	return (resout);
+	return (NULL);
 }
 
 int

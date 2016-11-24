@@ -170,8 +170,10 @@ DoSignRequest(xmlSecKeysMngrPtr mngr)
 	//err = fopen_s(&f, "..\\data\\request.xml", "rb");
 	//fprintf(stdout, "Load: ..\\data\\request_1.xml");
 	//err = fopen_s(&f, "..\\data\\request_1.xml", "rb");
-	fprintf(stdout, "Load: ..\\data\\request_2.xml");
-	err = fopen_s(&f, "..\\data\\request_2.xml", "rb");
+	//fprintf(stdout, "Load: ..\\data\\request_2.xml");
+	//err = fopen_s(&f, "..\\data\\request_2.xml", "rb");
+	fprintf(stdout, "Load: ..\\data\\request_3.xml");
+	err = fopen_s(&f, "..\\data\\request_3.xml", "rb");
 	if (err == 0)
 	{
 		fprintf(stdout, " - found\n");
@@ -230,6 +232,20 @@ DoSignString(xmlSecKeysMngrPtr mngr)
 	{
 		return (1);
 	}
+}
+
+int
+DoMakeBKP(xmlSecKeysMngrPtr mngr)
+{
+	xmlChar *input = BAD_CAST("CZ27695450|273|/5546/RO24|461670|2016-11-24T18:50:39+01:00|37.00");
+	xmlChar * res_s = eetSignerMakeBKP(mngr, input);
+	if (res_s != NULL)
+	{
+		fprintf(stdout, "BKP string value: %s\r\n", res_s);
+		eetFree(res_s);
+		return (1);
+	}
+	return (1);
 }
 
 void
@@ -323,8 +339,10 @@ int main()
 		fprintf(stdout, "== Load Trusted certs ==\r\n");
 		if (loadtrustedcerts(mngr) == 0)
 		{
-			//fprintf(stdout, "== Sign string ==\r\n");
-			//DoSignString();
+			fprintf(stdout, "== Sign string ==\r\n");
+			DoSignString(mngr);
+			fprintf(stdout, "== Make BPK ==\r\n");
+			DoMakeBKP(mngr);
 			fprintf(stdout, "== Sign Request == \r\n");
 			DoSignRequest(mngr);
 			fprintf(stdout, "== Verify Response ==\r\n");

@@ -7,6 +7,7 @@
 #include <stdint.h>
 
 #include <xmlsec/xmlsec.h>
+#include <xmlsec/errors.h>
 #include <xmlsec/base64.h>
 
 #include <libeet/encodeutils.h>
@@ -14,9 +15,12 @@
 
 #define handleErrors abort
 
-xmlChar *
-eetSignerSHA1(xmlSecByte *buf, xmlSecSize buflen)
+int
+eetSignerSHA1(xmlSecByte *buf, xmlSecSize buflen, xmlSecByte ** outbuf, xmlSecSize * outlen)
 {
+	xmlSecAssert2(outbuf != NULL, -1);
+	xmlSecAssert2(outlen != NULL, -1);
+
 	EVP_MD_CTX *ctx;
 	int res = 0;
 
@@ -38,16 +42,21 @@ eetSignerSHA1(xmlSecByte *buf, xmlSecSize buflen)
 
 	unsigned char digest[EVP_MAX_MD_SIZE];
 	unsigned int digest_len = sizeof(digest);
+	unsigned int md_size = 0;
 
 	if (1 != EVP_DigestFinal_ex(ctx, digest, &digest_len))
 	{
 		res = -3;
 		handleErrors();
 	}
-	digest[ctx->digest->md_size] = '\0';
+
+	md_size = ctx->digest->md_size;
+	(*outlen) = md_size;
+	(*outbuf) = xmlStrndup((xmlChar *)digest, md_size);
+
 	EVP_MD_CTX_destroy(ctx);
 
-	return(xmlStrdup((xmlChar *) digest));
+	return(res);
 }
 
 int
