@@ -126,11 +126,11 @@ CC 			= cl.exe
 !if "$(PLATFORM)" == "x64"
 CFLAGS 			= /nologo /D "WIN64" /D "_WINDOWS" 
 !else
-CFLAGS 			= /nologo /D "WIN32" /D "_WINDOWS" 
+CFLAGS 			= /nologo /D "WIN32" /D "_WINDOWS" /arch:SSE
 !endif
 CFLAGS 			= $(CFLAGS) /D "_MBCS" /D "_REENTRANT"  /W1  
-CFLAGS 			= $(CFLAGS) /I$(BASEDIR) /I$(BASEDIR)\include
-CFLAGS 			= $(CFLAGS) /I$(INCPREFIX)
+CFLAGS 			= $(CFLAGS) /I"$(BASEDIR)" /I"$(BASEDIR)\include"
+CFLAGS 			= $(CFLAGS) /I"$(INCPREFIX)"
 CFLAGS 			= $(CFLAGS) /D PACKAGE=\"$(LIBEET_NAME)\" 
 CFLAGS 			= $(CFLAGS) /D "HAVE_STDIO_H" /D "HAVE_STDLIB_H"
 CFLAGS 			= $(CFLAGS) /D "HAVE_STRING_H" /D "HAVE_CTYPE_H"
@@ -157,7 +157,7 @@ APP_A_CFLAGS	=
 #
 LD 			    = link.exe
 LDFLAGS 		= /nologo 
-LDFLAGS 		= $(LDFLAGS) /LIBPATH:$(BINDIR) /LIBPATH:$(LIBPREFIX) /DYNAMICBASE 
+LDFLAGS 		= $(LDFLAGS) /LIBPATH:"$(BINDIR)" /LIBPATH:"$(LIB)" /DYNAMICBASE 
 #/NODEFAULTLIB:"LIBCMT.lib"
 LIBS 		  	=
 APP_LIBS    = 

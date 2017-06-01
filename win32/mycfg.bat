@@ -9,20 +9,27 @@ REM Mirus <mail@mirus.cz>
 REM 
 REM ussage : mycfg [debug]
 
+set local
+pushd
+
 SET ISDEBUG=no
 if %1A==A set ISDEBUG=no
 if %1A==debugA set ISDEBUG=yes
 
-SET PREFIX=C:\build_VC12\Win32
+cd ..\
+SET PREFIX=%CD%
+cd Win32
 if %PLATFORM%A== x64A goto DoWin64
+SET LIBEET_LIB=%PREFIX%\lib;%MSSDK_LIB%
 goto doit
 :DoWin64 
-SET PREFIX=C:\build_VC12\Win64
+SET LIBEET_LIB=%PREFIX%\lib64;%MSSDK_LIB%
 
 :doit
 SET LIBEET_INCLUDE=%PREFIX%\include;%PREFIX%\include\libxml2;%MSSDK_INCLUDE%
-SET LIBEET_LIB=%PREFIX%\lib;%MSSDK_LIB%
 SET LIBEET_OPTIONS=static=yes debug=%ISDEBUG% unicode=yes
 
 del /F Makefile configure.txt version32.rc
-cscript configure.js prefix=%PREFIX% %LIBEET_OPTIONS% include=%LIBEET_INCLUDE% lib=%LIBEET_LIB% sodir=%PREFIX%\bin
+cscript configure.js prefix="%PREFIX%" %LIBEET_OPTIONS% include="%LIBEET_INCLUDE%" lib="%LIBEET_LIB%" sodir="%PREFIX%\bin"
+
+popd
