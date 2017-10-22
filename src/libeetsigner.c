@@ -23,6 +23,12 @@ static int eetSignerInitialized = 0;
 static xmlSecKeysMngrPtr defaultkeysmngr = NULL;
 const int SIGSIZE = 256;
 
+#define xmlSecSimpleKeysStoreSize \
+        (sizeof(xmlSecKeyStore) + sizeof(xmlSecPtrList))
+#define xmlSecSimpleKeysStoreGetList(store) \
+    ((xmlSecKeyStoreCheckSize((store), xmlSecSimpleKeysStoreSize)) ? \
+        (xmlSecPtrListPtr)(((xmlSecByte*)(store)) + sizeof(xmlSecKeyStore)) : \
+        (xmlSecPtrListPtr)NULL)
 
 void * 
 eetMalloc(size_t size)
@@ -781,11 +787,13 @@ eetSignerVerifyResponse(xmlSecKeysMngrPtr mngr, const xmlSecByte * data, xmlSecS
 	xmlDocPtr doc = NULL;
 	xmlNodePtr node = NULL;
 	xmlSecDSigCtxPtr dsigCtx = NULL;
+	xmlNodePtr BSTNode = NULL;
+	xmlNodePtr SignatureNode = NULL;
 	int res = -1;
 
 	xmlSecKeysMngrPtr _mngr = getKeysMngr(mngr);
 	xmlSecAssert2(_mngr != NULL, -1);
-	xmlSecAssert2(data!= NULL, -1);
+	xmlSecAssert2(data != NULL, -1);
 
 	/* load file */
 	doc = xmlParseMemory((char *)data, dataSize);
@@ -799,6 +807,12 @@ eetSignerVerifyResponse(xmlSecKeysMngrPtr mngr, const xmlSecByte * data, xmlSecS
 	if (node == NULL) {
 		fprintf(stderr, "Error: start node not found in document\n");
 		goto done;
+	}
+
+	/* find BinarySecurityToken node */
+	BSTNode = xmlSecFindNode(xmlDocGetRootElement(doc), libeetNodeBinarySecurityToken, libeetWsseNs);
+	if (NULL != BSTNode) {
+		eetSignerAddBSTCert(_mngr, xmlNodeGetContent(BSTNode));
 	}
 
 	if (normalizeResponseXML(doc, BAD_CAST("Id")) < 0) {
@@ -978,4 +992,92 @@ eetSignerUTCToLocalTime(__time64_t *UTC_time)
 		}
 	}
 	return(0);
+}
+
+void
+eetSignerAddBSTCert(xmlSecKeysMngrPtr mngr, const xmlChar * data)
+{
+	xmlSecKeyInfoCtxPtr keyInfoCtx = NULL;
+	xmlSecKeyPtr secKey = NULL;
+	xmlSecKeyPtr secKeyNew = NULL;
+	xmlSecKeyPtr tmpKey = NULL;
+
+	xmlSecKeyStorePtr store = NULL;
+    xmlSecPtrListPtr list = NULL;
+
+	xmlSecSize size, pos;
+
+	xmlChar * certheader = "-----BEGIN CERTIFICATE-----\n";
+	xmlChar * certfooter = "\n-----END CERTIFICATE-----\n";
+
+	size = xmlStrlen(certheader) + xmlStrlen(data) + xmlStrlen(certfooter);
+
+	xmlChar * certstring = eetCalloc(size + 1);
+
+	xmlStrcat(certstring, certheader);
+	xmlStrcat(certstring, data);
+	xmlStrcat(certstring, certfooter);	
+
+	keyInfoCtx = xmlSecKeyInfoCtxCreate(getKeysMngr(mngr));
+	if (keyInfoCtx == NULL)
+	{
+		fprintf(stdout, "Key Context creation failed !!!");
+		goto godone;
+	}
+
+	secKey = xmlSecKeysMngrFindKey(getKeysMngr(mngr), RESPONSECERT_KEYNAME, keyInfoCtx);
+
+	secKeyNew = xmlSecCryptoAppKeyLoadMemory(certstring, xmlStrlen(certstring), xmlSecKeyDataFormatCertPem, NULL, NULL, NULL);
+	if (secKeyNew == NULL)
+	{
+		fprintf(stdout, "BinarySecurityToken is not loaded !!!");
+		goto godone;
+	}
+
+	if (xmlSecKeySetName(secKeyNew, RESPONSECERT_KEYNAME) != 0)
+	{
+		fprintf(stdout, "xmlSecKeySetName failed !!!");
+		goto godone;
+	}
+
+	if (NULL != secKey)
+	{
+		store = xmlSecKeysMngrGetKeysStore(getKeysMngr(mngr));
+		list = xmlSecSimpleKeysStoreGetList(store);
+		size = xmlSecPtrListGetSize(list);
+		for (pos = 0; pos < size; ++pos)
+		{
+			tmpKey = (xmlSecKeyPtr)xmlSecPtrListGetItem(list, pos);
+			if ((NULL != tmpKey) && (xmlSecKeyMatch(tmpKey, RESPONSECERT_KEYNAME, &(keyInfoCtx->keyReq)) == 1))
+			{
+				if (xmlSecKeyCopy(tmpKey, secKeyNew) < 0)
+				{
+					fprintf(stdout, "xmlSecKeyCopy failed !!!");
+					goto godone;
+				}
+				if (xmlSecKeySetName(tmpKey, RESPONSECERT_KEYNAME) != 0)
+				{
+					fprintf(stdout, "xmlSecKeySetName failed !!!");
+					goto godone;
+				}
+			}
+
+		}
+	}
+	else {
+		if (xmlSecCryptoAppDefaultKeysMngrAdoptKey(getKeysMngr(mngr), secKeyNew) != 0)
+		{
+			fprintf(stdout, "xmlSecCryptoAppDefaultKeysMngrAdoptKey failed !!!");
+			goto godone;
+		}
+	}
+
+
+godone:
+	if (certstring != NULL)
+		eetFree(certstring);
+	if (keyInfoCtx != NULL)
+		xmlSecKeyInfoCtxDestroy(keyInfoCtx);
+	if (secKey != NULL)
+		xmlSecKeyDestroy(secKey);
 }

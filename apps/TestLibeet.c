@@ -348,6 +348,7 @@ int main()
 			fprintf(stdout, "== Verify Response ==\r\n");
 			testVerifyResponse(mngr);
 		}
+
 		fprintf(stdout, "== Get X509 Key Cert ==\r\n");
 		libeetX509Ptr x509Cert = eetSignerGetX509KeyCert(mngr);
 		if (NULL != x509Cert){
@@ -357,6 +358,16 @@ int main()
 			DoPrintIssuer(x509Cert);
 		}
 		fprintf(stdout, "== Get X509 Key Cert ==\r\n");
+
+		fprintf(stdout, "== Get X509 Response Cert ==\r\n");
+		x509Cert = eetSignerGetX509ResponseCert(mngr);
+		if (NULL != x509Cert){
+			DoPrintSubject(x509Cert);
+			DoPrintSerialNumber(x509Cert);
+			DoPrintDates(x509Cert);
+			DoPrintIssuer(x509Cert);
+		}
+		fprintf(stdout, "== Get X509 Response Cert ==\r\n");
 	}
 
 

@@ -32,6 +32,7 @@ AUTOCONF = .\configure.txt
 #WITH_LIBEET_DEBUG = 1
 #UNICODE = 1
 #DEBUG = 0
+#WITH_ICONV = 0
 #WITH_DL = 1
 #PREFIX = . # set this to the right value.
 #BINPREFIX = $(PREFIX)\bin
@@ -59,6 +60,7 @@ BUILDCONFIG=release
 
 BUILDPREFIX=$(BUILDPREFIX)\$(BUILDCONFIG)
 BINDIR=$(BUILDPREFIX)\$(BINDIR)
+DISTDIR=.\libeetsigner-$(LIBEET_MAJOR_VERSION).$(LIBEET_MINOR_VERSION).$(LIBEET_MICRO_VERSION).$(BDSUFFIX)
 
 #
 # Names of various input and output components.
@@ -170,9 +172,15 @@ LDFLAGS 		= $(LDFLAGS)
 #/OPT:NOWIN98
 !endif
 
-SOLIBS 			= $(LIBS) libxmlsec-openssl_a.lib libeay32_a.lib crypt32.lib libxmlsec_a.lib libxml2_a.lib libxslt_a.lib libexslt_a.lib libiconv_a.lib wsock32.lib ws2_32.lib kernel32.lib user32.lib gdi32.lib advapi32.lib
-ALIBS 			= $(LIBS) libxmlsec_a.lib libxml2_a.lib libxslt_a.lib libiconv_a.lib crypt32.lib
-APP_LIBS    = libeay32_a.lib libxmlsec-openssl_a.lib libiconv_a.lib crypt32.lib kernel32.lib user32.lib gdi32.lib advapi32.lib
+SOLIBS 			= $(LIBS) libxmlsec-openssl_a.lib libeay32_a.lib crypt32.lib libxmlsec_a.lib libxml2_a.lib libxslt_a.lib libexslt_a.lib wsock32.lib ws2_32.lib kernel32.lib user32.lib gdi32.lib advapi32.lib
+ALIBS 			= $(LIBS) libxmlsec_a.lib libxml2_a.lib libxslt_a.lib crypt32.lib
+APP_LIBS		= libeay32_a.lib libxmlsec-openssl_a.lib crypt32.lib kernel32.lib user32.lib gdi32.lib advapi32.lib
+
+!if "$(WITH_ICONV)" == "1"
+SOLIBS 			= $(SOLIBS) libiconv_a.lib
+ALIBS 			= $(ALIBS) libiconv_a.lib
+APP_LIBS		= $(APP_LIBS) libiconv_a.lib
+!endif
 
 # The archiver and its options.
 AR = link.exe /lib
@@ -202,7 +210,7 @@ bannerdistbin:
 
 libeetsigner : $(LIBEET_APPS_INTDIR) $(BINDIR)\$(LIBEET_SO)
 
-libeetsignera :  $(LIBEET_APPS_INTDIR_A) $(BINDIR)\$(LIBEET_A)
+libeetsignera : $(LIBEET_APPS_INTDIR_A) $(BINDIR)\$(LIBEET_A)
 
 apps : $(BINDIR)\$(APP_NAME) $(BINDIR)\$(APP_NAME_A)
 
@@ -216,31 +224,31 @@ clean :
 rebuild : clean all
 
 install : all
-	if not exist $(INCPREFIX)\$(LIBEET_NAME) mkdir $(INCPREFIX)\$(LIBEET_NAME)
-	if not exist $(BINPREFIX) mkdir $(BINPREFIX)
-	if not exist $(LIBPREFIX) mkdir $(LIBPREFIX)
-	if not exist $(PREFIX)\data mkdir $(PREFIX)\data
-	if exist $(BASEDIR)\include\$(LIBEET_NAME) copy $(BASEDIR)\include\$(LIBEET_NAME)\*.h $(INCPREFIX)\$(LIBEET_NAME)
-	if exist $(PREFIX)\data copy $(BASEDIR)\data\*.* $(PREFIX)\data
-	if exist $(BINDIR)\$(LIBEET_SO) copy $(BINDIR)\$(LIBEET_SO) $(SOPREFIX)
-	if exist $(BINDIR)\$(LIBEET_SO_MANIFEST) copy $(BINDIR)\$(LIBEET_SO_MANIFEST) $(SOPREFIX)
-	if exist $(BINDIR)\$(LIBEET_A) copy $(BINDIR)\$(LIBEET_A) $(LIBPREFIX)
-	if exist $(BINDIR)\$(LIBEET_IMP) copy $(BINDIR)\$(LIBEET_IMP) $(LIBPREFIX)
-	if exist $(BINDIR)\$(APP_NAME) copy $(BINDIR)\$(APP_NAME) $(BINPREFIX)
-	if exist $(BINDIR)\$(APP_NAME_A) copy $(BINDIR)\$(APP_NAME_A) $(BINPREFIX)
-	if exist $(BINDIR)\$(APP_NAME_MANIFEST) copy $(BINDIR)\$(APP_NAME_MANIFEST) $(BINPREFIX)
-	if exist $(BINDIR)\$(APP_NAME_A_MANIFEST) copy $(BINDIR)\$(APP_NAME_A_MANIFEST) $(BINPREFIX)
+	if not exist "$(INCPREFIX)\$(LIBEET_NAME)" mkdir "$(INCPREFIX)\$(LIBEET_NAME)"
+	if not exist "$(BINPREFIX)" mkdir "$(BINPREFIX)"
+	if not exist "$(LIBPREFIX)" mkdir "$(LIBPREFIX)"
+	if not exist "$(PREFIX)\data" mkdir "$(PREFIX)\data"
+	if exist "$(BASEDIR)\include\$(LIBEET_NAME)" copy "$(BASEDIR)\include\$(LIBEET_NAME)\*.h" "$(INCPREFIX)\$(LIBEET_NAME)"
+	if exist "$(PREFIX)\data" copy "$(BASEDIR)\data\*.*" "$(PREFIX)\data"
+	if exist "$(BINDIR)\$(LIBEET_SO)" copy "$(BINDIR)\$(LIBEET_SO)" "$(SOPREFIX)"
+	if exist "$(BINDIR)\$(LIBEET_SO_MANIFEST)" copy "$(BINDIR)\$(LIBEET_SO_MANIFEST)" "$(SOPREFIX)"
+	if exist "$(BINDIR)\$(LIBEET_A)" copy "$(BINDIR)\$(LIBEET_A)" "$(LIBPREFIX)"
+	if exist "$(BINDIR)\$(LIBEET_IMP)" copy "$(BINDIR)\$(LIBEET_IMP)" "$(LIBPREFIX)"
+	if exist "$(BINDIR)\$(APP_NAME)" copy "$(BINDIR)\$(APP_NAME)" "$(BINPREFIX)"
+	if exist "$(BINDIR)\$(APP_NAME_A)" copy "$(BINDIR)\$(APP_NAME_A)" "$(BINPREFIX)"
+	if exist "$(BINDIR)\$(APP_NAME_MANIFEST)" copy "$(BINDIR)\$(APP_NAME_MANIFEST)" "$(BINPREFIX)"
+	if exist "$(BINDIR)\$(APP_NAME_A_MANIFEST)" copy "$(BINDIR)\$(APP_NAME_A_MANIFEST)" "$(BINPREFIX)"
 
 uninstall :
-	if exist $(INCPREFIX)\$(LIBEET_NAME) rmdir /S /Q $(INCPREFIX)\$(LIBEET_NAME)
-	if exist $(SOPREFIX)\$(LIBEET_SO) del /F /S /Q $(SOPREFIX)\$(LIBEET_SO)
-	if exist $(SOPREFIX)\$(LIBEET_SO_MANIFEST) del /F /S /Q $(SOPREFIX)\$(LIBEET_SO)
-	if exist $(LIBPREFIX)\$(LIBEET_A) del /F /S /Q $(LIBPREFIX)\$(LIBEET_A)
-	if exist $(LIBPREFIX)\$(LIBEET_IMP) del /F /S /Q $(LIBPREFIX)\$(LIBEET_IMP)
-	if exist $(BINPREFIX)\$(APP_NAME) del /F /S /Q $(BINPREFIX)\$(APP_NAME)
-	if exist $(BINPREFIX)\$(APP_NAME_A) del /F /S /Q $(BINPREFIX)\$(APP_NAME_A)
-	if exist $(BINPREFIX)\$(APP_NAME_MANIFEST) del /F /S /Q $(BINPREFIX)\$(APP_NAME_MANIFEST)
-	if exist $(BINPREFIX)\$(APP_NAME_A_MANIFEST) del /F /S /Q $(BINPREFIX)\$(APP_NAME_A_MANIFEST)
+	if exist "$(INCPREFIX)\$(LIBEET_NAME)" rmdir /S /Q "$(INCPREFIX)\$(LIBEET_NAME)"
+	if exist "$(SOPREFIX)\$(LIBEET_SO)" del /F /S /Q "$(SOPREFIX)\$(LIBEET_SO)"
+	if exist "$(SOPREFIX)\$(LIBEET_SO_MANIFEST)" del /F /S /Q "$(SOPREFIX)\$(LIBEET_SO)"
+	if exist "$(LIBPREFIX)\$(LIBEET_A)" del /F /S /Q "$(LIBPREFIX)\$(LIBEET_A)"
+	if exist "$(LIBPREFIX)\$(LIBEET_IMP)" del /F /S /Q "$(LIBPREFIX)\$(LIBEET_IMP)"
+	if exist "$(BINPREFIX)\$(APP_NAME)" del /F /S /Q "$(BINPREFIX)\$(APP_NAME)"
+	if exist "$(BINPREFIX)\$(APP_NAME_A)" del /F /S /Q "$(BINPREFIX)\$(APP_NAME_A)"
+	if exist "$(BINPREFIX)\$(APP_NAME_MANIFEST)" del /F /S /Q "$(BINPREFIX)\$(APP_NAME_MANIFEST)"
+	if exist "$(BINPREFIX)\$(APP_NAME_A_MANIFEST)" del /F /S /Q "$(BINPREFIX)\$(APP_NAME_A_MANIFEST)"
 
 # This is a target for me, to make a binary distribution. Not for the public use,
 # keep your hands off :-)
@@ -252,22 +260,22 @@ bindist : bannerdistbin buildall
 
 # Makes the compiler output directory.
 $(BUILDPREFIX) :
-	if not exist $(BUILDPREFIX) mkdir $(BUILDPREFIX)
+	if not exist "$(BUILDPREFIX)" mkdir "$(BUILDPREFIX)"
 
 $(BINDIR) :
-	if not exist $(BUILDPREFIX) mkdir $(BUILDPREFIX)
-	if not exist $(BINDIR) mkdir $(BINDIR)
+	if not exist "$(BUILDPREFIX)" mkdir "$(BUILDPREFIX)"
+	if not exist "$(BINDIR)" mkdir "$(BINDIR)"
 
 # Makes intermediate directories.
 $(LIBEET_APPS_INTDIR) :
-	if not exist $(LIBEET_APPS_INTDIR) mkdir $(LIBEET_APPS_INTDIR)
+	if not exist "$(LIBEET_APPS_INTDIR)" mkdir "$(LIBEET_APPS_INTDIR)"
 $(LIBEET_APPS_INTDIR_A) :
-	if not exist $(LIBEET_APPS_INTDIR_A) mkdir $(LIBEET_APPS_INTDIR_A)
+	if not exist "$(LIBEET_APPS_INTDIR_A)" mkdir "$(LIBEET_APPS_INTDIR_A)"
 
 $(LIBEET_INTDIR) :
-	if not exist $(LIBEET_INTDIR) mkdir $(LIBEET_INTDIR)
+	if not exist "$(LIBEET_INTDIR)" mkdir "$(LIBEET_INTDIR)"
 $(LIBEET_INTDIR_A) :
-	if not exist $(LIBEET_INTDIR_A) mkdir $(LIBEET_INTDIR_A)
+	if not exist "$(LIBEET_INTDIR_A)" mkdir "$(LIBEET_INTDIR_A)"
 
 # An implicit rule for libEETSigner compilation.
 {$(APPS_SRCDIR)}.c{$(LIBEET_APPS_INTDIR)}.obj::

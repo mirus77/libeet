@@ -19,6 +19,7 @@ extern "C" {
 	EET_EXPORT void eetSignerSetDefaultKeysMngr(xmlSecKeysMngrPtr mngr);
 
 	EET_EXPORT libeetX509Ptr eetSignerGetX509KeyCert(xmlSecKeysMngrPtr mngr);
+	EET_EXPORT libeetX509Ptr eetSignerGetX509ResponseCert(xmlSecKeysMngrPtr mngr);
 
 	EET_EXPORT int eetSignerX509GetSubject(libeetX509Ptr X509Cert, xmlChar ** Subject);
 	EET_EXPORT int eetSignerX509GetSerialNum(libeetX509Ptr X509Cert, xmlChar ** SerialNum);

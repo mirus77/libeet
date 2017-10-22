@@ -1,5 +1,5 @@
 /* Configure script for xmlsec, specific for Windows with Scripting Host.
- * 
+ *
  * This script will configure the libxmlsec build process and create necessary files.
  * Run it with an 'help', or an invalid option and it will tell you what options
  * it accepts.
@@ -35,7 +35,7 @@ var optsFile = baseDir + "\\config.h";
 var verFileIn = "version32.rc.in";
 var verFile = "version32.rc";
 
-/* Version strings for the binary distribution. Will be filled later 
+/* Version strings for the binary distribution. Will be filled later
    in the code. */
 var verMajorLibEETSigner;
 var verMinorLibEETSigner;
@@ -54,6 +54,9 @@ var buildLib = ".";
 var buildPlatform = "x86";
 /* Local stuff */
 var error = 0;
+
+/* libeet features. */
+var withIconv = 1;
 
 /* Helper function, transforms the option variable into the 'Enabled'
    or 'Disabled' string. */
@@ -91,6 +94,7 @@ function usage()
 	txt += "LibEETSigner Library options, default value given in parentheses:\n\n";
 	txt += "\nWin32 build options, default value given in parentheses:\n\n";
 	txt += "  unicode:    Build Unicode version (" + (buildUnicode? "yes" : "no")  + ")\n";
+	txt += "  iconv:      Use the iconv library (" + (withIconv? "yes" : "no")  + ")\n";
 	txt += "  debug:      Build unoptimised debug executables (" + (buildDebug? "yes" : "no")  + ")\n";
 	txt += "  prefix:     Base directory for the installation (" + buildPrefix + ")\n";
 	txt += "  bindir:     Directory where xmlsec and friends should be installed\n";
@@ -99,7 +103,7 @@ function usage()
 	txt += "              (" + buildIncPrefix + ")\n";
 	txt += "  libdir:     Directory where static and import libraries should be\n";
 	txt += "              installed (" + buildLibPrefix + ")\n";
-	txt += "  sodir:      Directory where shared libraries should be installed\n"; 
+	txt += "  sodir:      Directory where shared libraries should be installed\n";
 	txt += "              (" + buildSoPrefix + ")\n";
 	txt += "  include:    Additional search path for the compiler, particularily\n";
 	txt += "              where libxml headers can be found (" + buildInclude + ")\n";
@@ -134,7 +138,7 @@ function discoverVersion()
 		} else if(s.search(/^LIBEET_VERSION_SUBMINOR/) != -1) {
 			vf.WriteLine(s);
 			verMicroLibEETSigner = s.substring(s.indexOf("=") + 1, s.length)
-		}		
+		}
 	}
 	cf.Close();
 	vf.WriteLine("BASEDIR=" + baseDir);
@@ -142,6 +146,7 @@ function discoverVersion()
 	vf.WriteLine("APPS_SRCDIR=" + srcDirApps);
 	vf.WriteLine("BINDIR=" + binDir);
 	vf.WriteLine("UNICODE=" + (buildUnicode? "1" : "0"));
+  vf.WriteLine("WITH_ICONV=" + (withIconv ? "1" : "0"));
 	vf.WriteLine("DEBUG=" + (buildDebug? "1" : "0"));
 	vf.WriteLine("STATIC=" + (buildStatic? "1" : "0"));
 	vf.WriteLine("PREFIX=" + buildPrefix);
@@ -156,7 +161,7 @@ function discoverVersion()
 
 function discoverBuildPlatform()
 {
-  var objShl, poms; 
+  var objShl, poms;
   objShl = new ActiveXObject("wscript.shell");
   poms = objShl.ExpandEnvironmentStrings("%PLATFORM%");
   if (poms != "%PLATFORM%") {
@@ -176,10 +181,10 @@ function configureLibEET()
 		ln = ofi.ReadLine();
 		s = new String(ln);
 		if (s.search(/\@VERSION\@/) != -1) {
-			of.WriteLine(s.replace(/\@VERSION\@/, 
+			of.WriteLine(s.replace(/\@VERSION\@/,
 				verMajorXmlSec + "." + verMinorXmlSec + "." + verMicroLibEETSigner));
 		} else if (s.search(/\@XMLSECVERSION_NUMBER\@/) != -1) {
-			of.WriteLine(s.replace(/\@XMLSECVERSION_NUMBER\@/, 
+			of.WriteLine(s.replace(/\@XMLSECVERSION_NUMBER\@/,
 				verMajorLibEETSigner*10000 + verMinorLibEETSigner*100 + verMicroLibEETSigner*1));
 		} else
 			of.WriteLine(ln);
@@ -198,10 +203,10 @@ function configureVersion32()
 		ln = ofi.ReadLine();
 		s = new String(ln);
 		if (s.search(/\@VERSION\@/) != -1) {
-			of.WriteLine(s.replace(/\@VERSION\@/, 
+			of.WriteLine(s.replace(/\@VERSION\@/,
 				verMajorLibEETSigner + "." + verMinorLibEETSigner + "." + verMicroLibEETSigner));
 		} else if (s.search(/\@VERSION2\@/) != -1) {
-			of.WriteLine(s.replace(/\@VERSION2\@/, 
+			of.WriteLine(s.replace(/\@VERSION2\@/,
 				verMajorLibEETSigner + "," + verMinorLibEETSigner + "," + verMicroLibEETSigner + ",0"));
 		} else
 			of.WriteLine(ln);
@@ -234,7 +239,7 @@ function genReadme(bname, ver, splatform, file)
 	f.WriteLine("environment variable.");
 	f.WriteLine("  If you want to make programmes in C which use " + bname + ", you'll");
 	f.WriteLine("likely know how to use the contents of this package. If you don't, please");
-	f.WriteLine("refer to your compiler's documentation."); 
+	f.WriteLine("refer to your compiler's documentation.");
 	f.WriteBlankLines(1);
 	f.WriteLine("  If there is something you cannot keep for yourself, such as a problem,");
 	f.WriteLine("a cheer of joy, a comment or a suggestion, feel free to contact me using");

@@ -130,6 +130,65 @@ godone:
 	return (X509Cert);
 }
 
+libeetX509Ptr 
+eetSignerGetX509ResponseCert(xmlSecKeysMngrPtr mngr)
+{
+	libeetX509Ptr X509Tmp = NULL;
+	libeetX509Ptr X509Cert = NULL;
+	xmlSecKeyInfoCtxPtr keyInfoCtx = NULL;
+	xmlSecKeyPtr secKey = NULL;
+	xmlSecKeyDataPtr dataItem = NULL;
+
+
+	xmlSecKeysMngrPtr _mngr = getKeysMngr(mngr);
+
+	xmlSecAssert2(_mngr != NULL, NULL);
+
+	keyInfoCtx = xmlSecKeyInfoCtxCreate(_mngr);
+	if (NULL == keyInfoCtx){
+		xmlSecError(XMLSEC_ERRORS_HERE,
+			NULL,
+			"eetSignerGetX509KeyCert",
+			XMLSEC_ERRORS_R_CRYPTO_FAILED,
+			"Create keyInfoCtx failed!");
+		goto godone;
+	}
+
+	secKey = xmlSecKeysMngrFindKey(_mngr, RESPONSECERT_KEYNAME, keyInfoCtx);
+	if (NULL == secKey){
+		xmlSecError(XMLSEC_ERRORS_HERE,
+			NULL,
+			"eetSignerGetX509ResponseCert",
+			XMLSEC_ERRORS_R_CRYPTO_FAILED,
+			"Cannot find privkey!");
+		fprintf(stdout, "eetSignerGetX509ResponseCert : %s\n", "Cannot find resonse cert!");
+		goto godone;
+	}
+
+	int iCount = xmlSecPtrListGetSize(secKey->dataList);
+	for (int i = 0; i < iCount; i++)
+	{
+		xmlSecKeyDataPtr dataItem = xmlSecPtrListGetItem(secKey->dataList, i);
+		if (xmlSecKeyDataIsValid(dataItem))
+		{
+			if (xmlSecKeyDataCheckId(dataItem, xmlSecOpenSSLKeyDataX509Id))
+			{
+				X509Tmp = xmlSecOpenSSLKeyDataX509GetCert(dataItem, i);
+				X509Cert = X509_dup(X509Tmp);
+				goto godone;
+			}
+		}
+	}
+
+godone:
+	if (NULL != keyInfoCtx)
+		xmlSecKeyInfoCtxDestroy(keyInfoCtx);
+	if (NULL != secKey)
+		xmlSecKeyDestroy(secKey);
+
+	return (X509Cert);
+}
+
 #ifdef HAVE_TIMEGM
 extern time_t timegm(struct tm *tm);
 #else  /* HAVE_TIMEGM */

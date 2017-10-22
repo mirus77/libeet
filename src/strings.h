@@ -47,6 +47,7 @@ const xmlChar libeetSoapEnvelopePrefix[];
 const xmlChar libeetSoapHeaderPrefix[];
 
 static const xmlChar * PFXCERT_KEYNAME = BAD_CAST("p");
+static const xmlChar * RESPONSECERT_KEYNAME = BAD_CAST("responsecert");
 
 #ifdef __cplusplus
 }
