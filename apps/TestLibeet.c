@@ -111,6 +111,32 @@ loadtrustedcerts(xmlSecKeysMngrPtr mngr)
 	}
 	fprintf(stdout, "\n");
 
+	fprintf(stdout, "Load: ..\\data\\trusted_CA_prod.der");
+	if (eetSignerAddTrustedCertFile(mngr, BAD_CAST("..\\data\\trusted_CA_prod.der")) < 0)
+	{
+		fprintf(stdout, "Failed: Load Trusted cert from memory");
+		res = -1;
+	}
+	else
+	{
+		res = 0;
+		fprintf(stdout, " - OK");
+	}
+	fprintf(stdout, "\n");
+
+	fprintf(stdout, "Load: ..\\data\\trusted_CA_prod_ROOT.der");
+	if (eetSignerAddTrustedCertFile(mngr, BAD_CAST("..\\data\\trusted_CA_prod_ROOT.der")) < 0)
+	{
+		fprintf(stdout, "Failed: Load Trusted cert from memory");
+		res = -1;
+	}
+	else
+	{
+		res = 0;
+		fprintf(stdout, " - OK");
+	}
+	fprintf(stdout, "\n");
+
 	return (res);
 }
 
@@ -345,7 +371,9 @@ int main()
 			DoMakeBKP(mngr);
 			fprintf(stdout, "== Sign Request == \r\n");
 			DoSignRequest(mngr);
-			fprintf(stdout, "== Verify Response ==\r\n");
+			fprintf(stdout, "== Verify Response first ==\r\n");
+			testVerifyResponse(mngr);
+			fprintf(stdout, "== Verify Response second ==\r\n");
 			testVerifyResponse(mngr);
 		}
 
