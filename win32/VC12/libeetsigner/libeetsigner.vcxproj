@@ -41,13 +41,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)..\..\include;$(SolutionDir)..\..\include\libxml2;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\..\include;$(SolutionDir)..\..\include\libiconv;$(SolutionDir)..\..\include\libxml2;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)..\..\lib;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
     <OutDir>$(SolutionDir)..\..\..\..\lib\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)..\..\include;$(SolutionDir)..\..\include\libxml2;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\..\include;$(SolutionDir)..\..\include\libiconv;$(SolutionDir)..\..\include\libxml2;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)..\..\lib;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
     <OutDir>$(SolutionDir)..\..\..\..\lib\</OutDir>
   </PropertyGroup>
@@ -63,7 +63,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libxmlsec-openssl_a.lib;libeay32_a.lib;crypt32.lib;libxmlsec_a.lib;libxml2_a.lib;libxslt_a.lib;libexslt_a.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libxmlsec-openssl_a.lib;libeay32_a.lib;crypt32.lib;libxmlsec_a.lib;libxml2_a.lib;libxslt_a.lib;libexslt_a.lib;libiconv_a.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(SolutionDir)..\..\..\..\bin\$(TargetName)d$(TargetExt)</OutputFile>
     </Link>
     <ProjectReference />
@@ -84,7 +84,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>libxmlsec-openssl_a.lib;libeay32_a.lib;crypt32.lib;libxmlsec_a.lib;libxml2_a.lib;libxslt_a.lib;libexslt_a.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libxmlsec-openssl_a.lib;libeay32_a.lib;crypt32.lib;libxmlsec_a.lib;libxml2_a.lib;libxslt_a.lib;libexslt_a.lib;libiconv_a.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(SolutionDir)..\..\..\..\bin\$(TargetName)$(TargetExt)</OutputFile>
     </Link>
     <ProjectReference />
