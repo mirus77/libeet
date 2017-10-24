@@ -71,6 +71,7 @@ extern "C" {
 	xmlSecKeysMngrPtr getKeysMngr(xmlSecKeysMngrPtr mngr);
 
 	void eetSignerAddBSTCert(xmlSecKeysMngrPtr mngr, const xmlChar * data);
+	void eetSignerRemoveBSTCert(xmlSecKeysMngrPtr mngr);
 
 #ifdef __cplusplus
 }

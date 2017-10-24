@@ -30,7 +30,7 @@ const int SIGSIZE = 256;
         (xmlSecPtrListPtr)(((xmlSecByte*)(store)) + sizeof(xmlSecKeyStore)) : \
         (xmlSecPtrListPtr)NULL)
 
-void * 
+void *
 eetMalloc(size_t size)
 {
 	return xmlMalloc(size);
@@ -57,7 +57,7 @@ defaultKeysMngrCreate()
 		SetDefaultKeysMngr(xmlSecKeysMngrCreate());
 }
 
-xmlSecKeysMngrPtr 
+xmlSecKeysMngrPtr
 getKeysMngr(xmlSecKeysMngrPtr mngr)
 {
 	if (NULL != mngr)
@@ -76,7 +76,7 @@ SetDefaultKeysMngr(xmlSecKeysMngrPtr mngr){
 	}
 }
 
-xmlSecKeysMngrPtr 
+xmlSecKeysMngrPtr
 GetDefaultKeysMngr(void)
 {
 	return(defaultkeysmngr);
@@ -159,7 +159,7 @@ eetSignerInit(void)
 			res = -6;
 		}
 	}
-	if (res != 0) 
+	if (res != 0)
 	{
 		if (res > -6) xmlSecCryptoShutdown();
 		if (res > -5) xmlSecCryptoAppShutdown();
@@ -179,14 +179,14 @@ eetSignerInit(void)
 	return (res);
 }
 
-void 
+void
 eetSignerCleanUp(void)
 {
 	eetSignerShutdown();
 	eetSignerInit();
 }
 
-void 
+void
 eetSignerShutdown(void)
 {
 	if (eetSignerInitialized == 0)
@@ -206,7 +206,7 @@ eetSignerShutdown(void)
 	eetSignerInitialized = 0;
 }
 
-int 
+int
 eetSignerLoadPFXKeyFile(xmlSecKeysMngrPtr mngr, const xmlChar * fileName, const xmlChar * pwd)
 {
 	int res = 0;
@@ -231,7 +231,7 @@ eetSignerLoadPFXKeyFile(xmlSecKeysMngrPtr mngr, const xmlChar * fileName, const 
 }
 
 
-int 
+int
 eetSignerLoadPFXKeyMemory(xmlSecKeysMngrPtr mngr, const xmlSecByte * data, xmlSecSize dataSize, const xmlChar * pwd)
 {
 	int res = 0;
@@ -246,9 +246,9 @@ eetSignerLoadPFXKeyMemory(xmlSecKeysMngrPtr mngr, const xmlSecByte * data, xmlSe
 	{
 		if (xmlSecKeySetName(key, PFXCERT_KEYNAME) != 0) res = -2;
 		if (res == 0)
-			if (xmlSecCryptoAppDefaultKeysMngrAdoptKey(getKeysMngr(mngr), key) != 0) 
-			{ 
-				res = -3; 
+			if (xmlSecCryptoAppDefaultKeysMngrAdoptKey(getKeysMngr(mngr), key) != 0)
+			{
+				res = -3;
 			}
 			else
 			{
@@ -263,7 +263,7 @@ eetSignerLoadPFXKeyMemory(xmlSecKeysMngrPtr mngr, const xmlSecByte * data, xmlSe
 	return res;
 }
 
-int 
+int
 eetSignerAddTrustedCertFile(xmlSecKeysMngrPtr mngr, const xmlChar * FileName)
 {
 	int res = 0;
@@ -297,7 +297,7 @@ eetSignerAddTrustedCertFile(xmlSecKeysMngrPtr mngr, const xmlChar * FileName)
 	return res;
 }
 
-int 
+int
 eetSignerAddTrustedCertMemory(xmlSecKeysMngrPtr mngr, const xmlSecByte * data, xmlSecSize dataSize)
 {
 	int res = 0;
@@ -407,7 +407,7 @@ godone:
 	return (res);
 }
 
-xmlChar * 
+xmlChar *
 eetSignerMakePKP(xmlSecKeysMngrPtr mngr, xmlChar * Data)
 {
 	xmlChar * res = NULL;
@@ -424,7 +424,7 @@ eetSignerMakePKP(xmlSecKeysMngrPtr mngr, xmlChar * Data)
 	return (res64);
 }
 
-xmlChar * 
+xmlChar *
 eetSignerMakeBKP(xmlSecKeysMngrPtr mngr, xmlChar * Data)
 {
 	int i,j;
@@ -503,7 +503,7 @@ normalizeRequestXML(xmlSecKeysMngrPtr mngr, const xmlDocPtr doc, const xmlChar *
 	xmlAttrPtr attr = NULL;
 	xmlChar * attrName = NULL;
 
-#if defined(DEBUG) 
+#if defined(DEBUG)
 	FILE * fp;
 #endif // DEBUG
 
@@ -582,7 +582,7 @@ normalizeRequestXML(xmlSecKeysMngrPtr mngr, const xmlDocPtr doc, const xmlChar *
 	if (cur == NULL)
 	{
 		xmlChar * cert64 = eetSignerGetRawCertDataAsBase64String(mngr);
-#if defined(DEBUG) 
+#if defined(DEBUG)
 		fprintf(stdout, "Body Id : %s\r\n", attrName);
 #endif // DEBUG
 		if (NULL != eetSignerTmplSecurityCreate(nodeHeader, NULL, cert64, attrName))
@@ -595,7 +595,7 @@ normalizeRequestXML(xmlSecKeysMngrPtr mngr, const xmlDocPtr doc, const xmlChar *
 
 	res = 0;
 
-#if defined(DEBUG) 
+#if defined(DEBUG)
 	errno_t err;
 	err = fopen_s(&fp, "normalizedRequestXML.xml", "w");
 	if (err == 0) {
@@ -606,7 +606,7 @@ normalizeRequestXML(xmlSecKeysMngrPtr mngr, const xmlDocPtr doc, const xmlChar *
 	return (res);
 }
 
-int 
+int
 eetSignerSignRequest(xmlSecKeysMngrPtr mngr, const xmlSecByte * data, xmlSecSize dataSize, xmlChar ** outbufp)
 {
 	xmlDocPtr doc = NULL;
@@ -614,7 +614,7 @@ eetSignerSignRequest(xmlSecKeysMngrPtr mngr, const xmlSecByte * data, xmlSecSize
 	xmlNodePtr nodeBody = NULL;
 	xmlSecDSigCtxPtr dsigCtx = NULL;
 
-#if defined(DEBUG) 
+#if defined(DEBUG)
 	errno_t err;
 	FILE * fp;
 #endif // DEBUG
@@ -634,7 +634,7 @@ eetSignerSignRequest(xmlSecKeysMngrPtr mngr, const xmlSecByte * data, xmlSecSize
 		goto done;
 	}
 
-#if defined(DEBUG) 
+#if defined(DEBUG)
 	err = fopen_s(&fp, "signedRequestbefore.xml", "w");
 	if (err == 0) {
 		xmlDocDump(fp, doc);
@@ -661,7 +661,7 @@ eetSignerSignRequest(xmlSecKeysMngrPtr mngr, const xmlSecByte * data, xmlSecSize
 		fprintf(stderr, "Error: body node not found in document\n");
 		goto done;
 	}
-	
+
 	/* create signature context */
 	dsigCtx = xmlSecDSigCtxCreate(_mngr);
 	if (dsigCtx == NULL) {
@@ -674,7 +674,7 @@ eetSignerSignRequest(xmlSecKeysMngrPtr mngr, const xmlSecByte * data, xmlSecSize
 	if (xmlSecDSigCtxSign(dsigCtx, node) == 0)
 	//if (1)
 		{
-#if defined(DEBUG) 
+#if defined(DEBUG)
 			fprintf(stdout, "Signature verify is OK\r\n");
 #endif // DEBUG
 		res = 0;
@@ -682,7 +682,7 @@ eetSignerSignRequest(xmlSecKeysMngrPtr mngr, const xmlSecByte * data, xmlSecSize
 		xmlDocDumpMemory(doc, outbufp, bufSz);
 		if (bufSz != NULL) eetFree(bufSz);
 
-#if defined(DEBUG) 
+#if defined(DEBUG)
 		//xmlDocDump(stdout, doc);
 		errno_t err;
 		FILE * fp;
@@ -769,7 +769,7 @@ normalizeResponseXML(const xmlDocPtr doc, const xmlChar * IdProp) {
 		res = 0;
 	}
 
-#if defined(DEBUG) 
+#if defined(DEBUG)
 	FILE * fp;
 	errno_t err;
 	err = fopen_s(&fp, "normalizedResponseXML.xml", "w");
@@ -795,6 +795,8 @@ eetSignerVerifyResponse(xmlSecKeysMngrPtr mngr, const xmlSecByte * data, xmlSecS
 	xmlSecAssert2(_mngr != NULL, -1);
 	xmlSecAssert2(data != NULL, -1);
 
+	eetSignerRemoveBSTCert(_mngr);
+
 	/* load file */
 	doc = xmlParseMemory((char *)data, dataSize);
 	if ((doc == NULL) || (xmlDocGetRootElement(doc) == NULL)) {
@@ -807,12 +809,6 @@ eetSignerVerifyResponse(xmlSecKeysMngrPtr mngr, const xmlSecByte * data, xmlSecS
 	if (node == NULL) {
 		fprintf(stderr, "Error: start node not found in document\n");
 		goto done;
-	}
-
-	/* find BinarySecurityToken node */
-	BSTNode = xmlSecFindNode(xmlDocGetRootElement(doc), libeetNodeBinarySecurityToken, libeetWsseNs);
-	if (NULL != BSTNode) {
-		eetSignerAddBSTCert(_mngr, xmlNodeGetContent(BSTNode));
 	}
 
 	if (normalizeResponseXML(doc, BAD_CAST("Id")) < 0) {
@@ -838,6 +834,11 @@ eetSignerVerifyResponse(xmlSecKeysMngrPtr mngr, const xmlSecByte * data, xmlSecS
 #if defined(DEBUG)
 		fprintf(stdout, "Signature is OK\n");
 #endif
+		/* find BinarySecurityToken node */
+		BSTNode = xmlSecFindNode(xmlDocGetRootElement(doc), libeetNodeBinarySecurityToken, libeetWsseNs);
+		if (NULL != BSTNode) {
+			eetSignerAddBSTCert(_mngr, xmlNodeGetContent(BSTNode));
+		}
 		res = dsigCtx->status;
 	}
 	else {
@@ -859,7 +860,7 @@ done:
 	return(res);
 }
 
-xmlChar * 
+xmlChar *
 eetSignerGetRawCertDataAsBase64String(xmlSecKeysMngrPtr mngr)
 {
 	xmlSecKeyInfoCtxPtr keyInfoCtx = NULL;
@@ -895,7 +896,7 @@ eetSignerGetRawCertDataAsBase64String(xmlSecKeysMngrPtr mngr)
 	}
 
     iSize = xmlSecOpenSSLKeyDataX509GetCertsSize(secKeyData);
-	
+
 	for (i = 0; i < iSize; i++)
 	{
 		x509cert = xmlSecOpenSSLKeyDataX509GetCert(secKeyData, i);
@@ -941,24 +942,24 @@ godone:
 	return(res);
 }
 
-xmlChar * 
+xmlChar *
 eetSignerlibeetVersion(void)
 {
 	return BAD_CAST(LIBEET_VERSION);
 }
 
-xmlChar * 
+xmlChar *
 eetSignerlibXmlVersion(void)
 {
 	return BAD_CAST(LIBXML_DOTTED_VERSION);
 }
 
-xmlChar * 
+xmlChar *
 eetSignerxmlSecVersion(void)
 {
 	return BAD_CAST(XMLSEC_VERSION);
 }
-xmlChar * 
+xmlChar *
 eetSignerCryptoVersion(void)
 {
 	int bufSz = 500;
@@ -1016,7 +1017,7 @@ eetSignerAddBSTCert(xmlSecKeysMngrPtr mngr, const xmlChar * data)
 
 	xmlStrcat(certstring, certheader);
 	xmlStrcat(certstring, data);
-	xmlStrcat(certstring, certfooter);	
+	xmlStrcat(certstring, certfooter);
 
 	keyInfoCtx = xmlSecKeyInfoCtxCreate(getKeysMngr(mngr));
 	if (keyInfoCtx == NULL)
@@ -1076,6 +1077,54 @@ eetSignerAddBSTCert(xmlSecKeysMngrPtr mngr, const xmlChar * data)
 godone:
 	if (certstring != NULL)
 		eetFree(certstring);
+	if (keyInfoCtx != NULL)
+		xmlSecKeyInfoCtxDestroy(keyInfoCtx);
+	if (secKey != NULL)
+		xmlSecKeyDestroy(secKey);
+}
+
+void 
+eetSignerRemoveBSTCert(xmlSecKeysMngrPtr mngr)
+{
+	xmlSecKeyInfoCtxPtr keyInfoCtx = NULL;
+	xmlSecKeyPtr secKey = NULL;
+	xmlSecKeyPtr secKeyNew = NULL;
+	xmlSecKeyPtr tmpKey = NULL;
+
+	xmlSecKeyStorePtr store = NULL;
+	xmlSecPtrListPtr list = NULL;
+
+	xmlSecSize size, pos;
+
+	keyInfoCtx = xmlSecKeyInfoCtxCreate(getKeysMngr(mngr));
+	if (keyInfoCtx == NULL)
+	{
+		fprintf(stdout, "Key Context creation failed !!!");
+		goto godone;
+	}
+
+	secKey = xmlSecKeysMngrFindKey(getKeysMngr(mngr), RESPONSECERT_KEYNAME, keyInfoCtx);
+
+	if (NULL != secKey)
+	{
+		store = xmlSecKeysMngrGetKeysStore(getKeysMngr(mngr));
+		list = xmlSecSimpleKeysStoreGetList(store);
+		size = xmlSecPtrListGetSize(list);
+		for (pos = 0; pos < size; ++pos)
+		{
+			tmpKey = (xmlSecKeyPtr)xmlSecPtrListGetItem(list, pos);
+			if ((NULL != tmpKey) && (xmlSecKeyMatch(tmpKey, RESPONSECERT_KEYNAME, &(keyInfoCtx->keyReq)) == 1))
+			{
+				if (xmlSecPtrListRemove(list, pos) < 0)
+				{
+					fprintf(stdout, "xmlSecPtrListRemove failed !!!");
+					goto godone;
+				}
+			}
+		}
+	}
+
+godone:
 	if (keyInfoCtx != NULL)
 		xmlSecKeyInfoCtxDestroy(keyInfoCtx);
 	if (secKey != NULL)

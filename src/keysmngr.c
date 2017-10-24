@@ -148,7 +148,7 @@ eetSignerGetX509ResponseCert(xmlSecKeysMngrPtr mngr)
 	if (NULL == keyInfoCtx){
 		xmlSecError(XMLSEC_ERRORS_HERE,
 			NULL,
-			"eetSignerGetX509KeyCert",
+			"eetSignerGetX509ResponseCert",
 			XMLSEC_ERRORS_R_CRYPTO_FAILED,
 			"Create keyInfoCtx failed!");
 		goto godone;
@@ -160,8 +160,8 @@ eetSignerGetX509ResponseCert(xmlSecKeysMngrPtr mngr)
 			NULL,
 			"eetSignerGetX509ResponseCert",
 			XMLSEC_ERRORS_R_CRYPTO_FAILED,
-			"Cannot find privkey!");
-		fprintf(stdout, "eetSignerGetX509ResponseCert : %s\n", "Cannot find resonse cert!");
+			"Cannot find response cert!");
+		fprintf(stdout, "eetSignerGetX509ResponseCert : %s\n", "Cannot find response cert!");
 		goto godone;
 	}
 
