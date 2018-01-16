@@ -1015,9 +1015,9 @@ eetSignerAddBSTCert(xmlSecKeysMngrPtr mngr, const xmlChar * data)
 
 	xmlChar * certstring = eetCalloc(size + 1);
 
-	xmlStrcat(certstring, certheader);
-	xmlStrcat(certstring, data);
-	xmlStrcat(certstring, certfooter);
+	certstring = xmlStrcat(certstring, certheader);
+	certstring = xmlStrcat(certstring, data);
+	certstring = xmlStrcat(certstring, certfooter);
 
 	keyInfoCtx = xmlSecKeyInfoCtxCreate(getKeysMngr(mngr));
 	if (keyInfoCtx == NULL)
