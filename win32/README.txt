@@ -11,8 +11,7 @@ subdirectories contain project files for various IDEs.
 
 
   1. Building the library
-  =================================
-============
+  =============================================
 
 Building from command line is the easiest, preferred and the only 
 currently supported method. 
@@ -112,42 +111,29 @@ configure script during the configure stage by typing
 That would be it, enjoy.
 
   2. Building your appliation
-  =================================
-============
+  =============================================
 
 On Windows there is no easy way to automatically configure compilation
 options or paths. You have to do everything manualy. Start up your
 favorite IDE or text editor and read on.
     
-  2.1 Global Defines.
-  -------------
--------------
--------------
-------
+  2.1 Global Defines.  
+  ---------------------------------------------
 
   2.1 Additional Global Defines for static linking.
-  -------------
--------------
--------------
-------
+  ---------------------------------------------
 
 Also if you (*and only if*) are linking libraries staticaly, you'll need to add following
 global defines:
 
   2.2 Setting include and library paths.
-  -------------
--------------
--------------
-------
+  ---------------------------------------------
 
 As usual, you need to have correct include and library paths to xmlsec, libxml,
 libxslt, iconv, openssl or any other library used in your application.
 
   2.3 Selecting correct Windows runtime libraries.
-  -------------
--------------
--------------
-------
+  ---------------------------------------------
 
 Windows basically has 6 different C runtimes. The first one is called libc.lib 
 and can only be linked to statically and used only in single-threaded mode.

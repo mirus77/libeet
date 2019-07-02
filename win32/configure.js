@@ -20,6 +20,7 @@ var srcDirApps = baseDir + "\\apps";
 var binDir = "binaries";
 /* Base name of what we are building. */
 var baseName = "libEETSigner";
+var cruntime = "/MD";
 
 /* Configure file which contains the version and the output file where
    we can store our build configuration. */
@@ -34,6 +35,9 @@ var optsFile = baseDir + "\\config.h";
 
 var verFileIn = "version32.rc.in";
 var verFile = "version32.rc";
+
+var verhFileIn = baseDir + "\\include\\libeet\\version.h.in";
+var verhFile = baseDir + "\\include\\libeet\\version.h";
 
 /* Version strings for the binary distribution. Will be filled later
    in the code. */
@@ -109,6 +113,7 @@ function usage()
 	txt += "              where libxml headers can be found (" + buildInclude + ")\n";
 	txt += "  lib:        Additional search path for the linker, particularily\n";
 	txt += "              where libxml library can be found (" + buildLib + ")\n";
+	txt += "  cruntime:   C-runtime compiler option (only msvc) (" + cruntime + ")\n";
 	WScript.Echo(txt);
 }
 
@@ -156,6 +161,7 @@ function discoverVersion()
 	vf.WriteLine("SOPREFIX=" + buildSoPrefix);
 	vf.WriteLine("INCLUDE=$(INCLUDE);" + buildInclude);
 	vf.WriteLine("LIB=$(LIB);" + buildLib);
+	vf.WriteLine("CRUNTIME=" + cruntime);
 	vf.Close();
 }
 
@@ -214,6 +220,33 @@ function configureVersion32()
 	ofi.Close();
 	of.Close();
 }
+
+function configureVersionH()
+{
+	fso = new ActiveXObject("Scripting.FileSystemObject");
+	ofi = fso.OpenTextFile(verhFileIn, 1);
+	of = fso.CreateTextFile(verhFile, true);
+	while (ofi.AtEndOfStream != true) {
+		ln = ofi.ReadLine();
+		s = new String(ln);
+		if (s.search(/\@VERSION\@/) != -1) {
+			of.WriteLine(s.replace(/\@VERSION\@/,
+				verMajorLibEETSigner + "." + verMinorLibEETSigner + "." + verMicroLibEETSigner));
+		} else if (s.search(/\@LIBEET_VERSION_MAJOR\@/) != -1) {
+			of.WriteLine(s.replace(/\@LIBEET_VERSION_MAJOR\@/,
+				verMajorLibEETSigner));
+		} else if (s.search(/\@LIBEET_VERSION_MINOR\@/) != -1) {
+			of.WriteLine(s.replace(/\@LIBEET_VERSION_MINOR\@/,
+				verMinorLibEETSigner));
+		} else if (s.search(/\@LIBEET_VERSION_SUBMINOR\@/) != -1) {
+			of.WriteLine(s.replace(/\@LIBEET_VERSION_SUBMINOR\@/,
+				verMicroLibEETSigner));
+		} else
+			of.WriteLine(ln);
+	}
+	ofi.Close();
+	of.Close();
+} 
 
 /* Creates the readme file for the binary distribution of 'bname', for the
    version 'ver' in the file 'file'. This one is called from the Makefile when
@@ -296,6 +329,8 @@ for (i = 0; (i < WScript.Arguments.length) && (error == 0); i++) {
 			buildInclude = arg.substring(opt.length + 1, arg.length);
 		else if (opt == "lib")
 			buildLib = arg.substring(opt.length + 1, arg.length);
+		else if (opt == "cruntime")
+			cruntime = arg.substring(opt.length + 1, arg.length);
 		else
 			error = 1;
 	} else if (i == 0) {
@@ -315,6 +350,13 @@ for (i = 0; (i < WScript.Arguments.length) && (error == 0); i++) {
 if (error != 0) {
 	usage();
 	WScript.Quit(error);
+}
+
+// if user choses to link the c-runtime library statically into libxml2
+// with /MT and friends, then we need to enable static linking for xmllint
+if (cruntime == "/MT" || cruntime == "/MTd" ||
+    cruntime == "/ML" || cruntime == "/MLd") {
+    buildStatic = 1;
 }
 
 // Discover the version.
@@ -341,6 +383,11 @@ if (error != 0) {
 	WScript.Quit(error);
 }
 
+configureVersionH()
+if (error != 0) {
+	WScript.Echo("Generate libeet/version.h failed, aborting.");
+	WScript.Quit(error);
+}
 
 // Create the Makefile.
 var fso = new ActiveXObject("Scripting.FileSystemObject");
@@ -362,6 +409,8 @@ txtOut += "Put static libs in: " + buildLibPrefix + "\n";
 txtOut += "Put shared libs in: " + buildSoPrefix + "\n";
 txtOut += "      Include path: " + buildInclude + "\n";
 txtOut += "          Lib path: " + buildLib + "\n";
+txtOut += "  C-Runtime option: " + cruntime + "\n";
+txtOut += "           Static : " + boolToStr(buildStatic) + "\n";
 WScript.Echo(txtOut);
 
 // Done.

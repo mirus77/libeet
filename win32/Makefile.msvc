@@ -137,6 +137,7 @@ CFLAGS 			= $(CFLAGS) /D PACKAGE=\"$(LIBEET_NAME)\"
 CFLAGS 			= $(CFLAGS) /D "HAVE_STDIO_H" /D "HAVE_STDLIB_H"
 CFLAGS 			= $(CFLAGS) /D "HAVE_STRING_H" /D "HAVE_CTYPE_H"
 CFLAGS 			= $(CFLAGS) /D "HAVE_MALLOC_H" /D "HAVE_MEMORY_H"
+CFLAGS      = $(CFLAGS) $(CRUNTIME)
 
 !if "$(UNICODE)" == "1"
 CFLAGS 			= $(CFLAGS) /D "UNICODE" /D "_UNICODE"
@@ -144,9 +145,9 @@ CFLAGS 			= $(CFLAGS) /D "UNICODE" /D "_UNICODE"
 
 # Optimisation and debug symbols.
 !if "$(DEBUG)" == "1"
-CFLAGS 			= $(CFLAGS) /D "_DEBUG" /Od /Z7 /MDd
+CFLAGS 			= $(CFLAGS) /D "_DEBUG" /Od /Z7
 !else
-CFLAGS 			= $(CFLAGS) /D "NDEBUG" /O2 /MD
+CFLAGS 			= $(CFLAGS) /D "NDEBUG" /O2
 !endif
 
 RSC=rc.exe

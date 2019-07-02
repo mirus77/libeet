@@ -27,7 +27,7 @@ SET LIBEET_LIB=%PREFIX%\lib64;%MSSDK_LIB%
 
 :doit
 SET LIBEET_INCLUDE=%PREFIX%\include;%PREFIX%\include\libxml2;%MSSDK_INCLUDE%
-SET LIBEET_OPTIONS=static=yes debug=%ISDEBUG% unicode=yes
+SET LIBEET_OPTIONS=static=yes debug=%ISDEBUG% unicode=yes cruntime=/MT
 
 del /F Makefile configure.txt version32.rc
 cscript configure.js prefix="%PREFIX%" %LIBEET_OPTIONS% include="%LIBEET_INCLUDE%" lib="%LIBEET_LIB%" sodir="%PREFIX%\bin"
