@@ -8,7 +8,7 @@
 
 #include <libeet/libeet.h>
 #include <libeet/encodeutils.h>
-#include "strings.h"
+#include <libeet/soap.h>
 #include "templates.h"
 
 #include <openssl/x509.h>
@@ -16,7 +16,6 @@
 
 #include <xmlsec/openssl/x509.h>
 #include <xmlsec/app.h>
-#include <xmlsec/soap.h>
 #include <xmlsec/errors.h>
 
 static int eetSignerInitialized = 0;
@@ -515,15 +514,15 @@ normalizeRequestXML(xmlSecKeysMngrPtr mngr, const xmlDocPtr doc, const xmlChar *
 
 	nodeRoot = xmlSecGetNextElementNode(doc->children);
 
-	if ((nodeRoot != NULL) && !xmlSecCheckNodeName(nodeRoot, xmlSecNodeEnvelope, xmlSecSoap11Ns))
+	if ((nodeRoot != NULL) && !xmlSecCheckNodeName(nodeRoot, libeetNodeEnvelope, libeetSoap11Ns))
 	{
 		xmlUnlinkNode(nodeRoot);
 		// create new Envelope
 		nodeEnvelope = eetSignerTmplEnvelopeCreate(doc, libeetSoapEnvelopePrefix, BAD_CAST("id-TheBody"));
 		if (NULL != nodeEnvelope){
 			xmlDocSetRootElement(doc, nodeEnvelope);
-			nodeHeader = xmlSecSoap11GetHeader(nodeEnvelope);
-			nodeBody = xmlSecSoap11GetBody(nodeEnvelope);
+			nodeHeader = libeetSoap11GetHeader(nodeEnvelope);
+			nodeBody = libeetSoap11GetBody(nodeEnvelope);
 			// old root element placed inside new body node
 			xmlSecAddChildNode(nodeBody, nodeRoot);
 		}
@@ -531,8 +530,8 @@ normalizeRequestXML(xmlSecKeysMngrPtr mngr, const xmlDocPtr doc, const xmlChar *
 	else
 	{
 		nodeEnvelope = nodeRoot;
-		nodeHeader = xmlSecSoap11GetHeader(nodeEnvelope);
-		nodeBodyOld = xmlSecSoap11GetBody(nodeEnvelope);
+		nodeHeader = libeetSoap11GetHeader(nodeEnvelope);
+		nodeBodyOld = libeetSoap11GetBody(nodeEnvelope);
 		if (nodeHeader != NULL)
 		{
 			xmlUnlinkNode(nodeHeader);
@@ -543,8 +542,8 @@ normalizeRequestXML(xmlSecKeysMngrPtr mngr, const xmlDocPtr doc, const xmlChar *
 		nodeEnvelope = eetSignerTmplEnvelopeCreate(doc, libeetSoapEnvelopePrefix, BAD_CAST("id-TheBody"));
 		if (NULL != nodeEnvelope){
 			xmlDocSetRootElement(doc, nodeEnvelope);
-			nodeHeader = xmlSecSoap11GetHeader(nodeEnvelope);
-			nodeBody = xmlSecSoap11GetBody(nodeEnvelope);
+			nodeHeader = libeetSoap11GetHeader(nodeEnvelope);
+			nodeBody = libeetSoap11GetBody(nodeEnvelope);
 			if (NULL != nodeBodyOld)
 			{
 				if (NULL != nodeBodyOld->children)
@@ -656,7 +655,7 @@ eetSignerSignRequest(xmlSecKeysMngrPtr mngr, const xmlSecByte * data, xmlSecSize
 	}
 
 	/* find body node */
-	nodeBody = xmlSecFindNode(xmlDocGetRootElement(doc), xmlSecNodeBody, xmlSecSoap11Ns);
+	nodeBody = xmlSecFindNode(xmlDocGetRootElement(doc), libeetNodeBody, libeetSoap11Ns);
 	if (nodeBody == NULL) {
 		fprintf(stderr, "Error: body node not found in document\n");
 		goto done;
@@ -722,10 +721,10 @@ normalizeResponseXML(const xmlDocPtr doc, const xmlChar * IdProp) {
 
 	xmlSecAssert2(doc != NULL, -1);
 
-	if (xmlStrlen(xmlSecNodeBody) > 0) {
-		Node = xmlSecFindNode(xmlDocGetRootElement(doc), xmlSecNodeBody, libeetSchema);
+	if (xmlStrlen(libeetNodeBody) > 0) {
+		Node = xmlSecFindNode(xmlDocGetRootElement(doc), libeetNodeBody, libeetSchema);
 		if (NULL == Node)
-			Node = xmlSecFindNode(xmlDocGetRootElement(doc), xmlSecNodeBody, xmlSecSoap11Ns);
+			Node = xmlSecFindNode(xmlDocGetRootElement(doc), libeetNodeBody, libeetSoap11Ns);
 		if (NULL != Node) {
 			Attr = xmlHasProp(Node, IdProp);
 			if (NULL != Attr) {
@@ -911,9 +910,10 @@ eetSignerGetRawCertDataAsBase64String(xmlSecKeysMngrPtr mngr)
 				lastpos = X509_NAME_get_index_by_NID(subj, NID_commonName, lastpos);
 				if (lastpos == -1)
 					break;
-				X509_NAME_ENTRY *e = X509_NAME_get_entry(subj, lastpos);
-				if (xmlStrlen(e->value->data) > 0)
-				{
+				X509_NAME_ENTRY *e = X509_NAME_get_entry(subj, lastpos);				
+				//if (xmlStrlen(e->value->data) > 0)
+				if (e)
+					{
 					//fprintf(stdout, "subject : %i - %s\r\n", i, e->value->data);
 
 					//extract public cert in base64

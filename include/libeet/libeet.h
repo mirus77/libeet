@@ -18,6 +18,8 @@ extern "C" {
 #	endif // !DEBUG
 #endif // _DEBUG
 
+#pragma comment(linker, "/STACK:2000000")
+#pragma comment(linker, "/HEAP:2000000")
 
 #ifndef XMLSEC_NO_XSLT
 #include <libxslt/xslt.h>
@@ -40,6 +42,7 @@ extern "C" {
 #include <libeet/exports.h>
 #include <libeet/keysmngr.h>
 #include <libeet/errors.h>
+#include <libeet/strings.h>
 
 	EET_EXPORT void * eetMalloc(size_t size);
 	EET_EXPORT void * eetCalloc(size_t size);

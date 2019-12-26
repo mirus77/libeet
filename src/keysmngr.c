@@ -9,7 +9,6 @@
 #include <xmlsec/errors.h>
 
 #include <memory.h>
-#include "strings.h"
 
 xmlSecKeysMngrPtr
 eetSignerKeysMngrCreate(void)

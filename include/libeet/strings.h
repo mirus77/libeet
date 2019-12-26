@@ -19,7 +19,8 @@ const xmlChar libeetWsuNs[];
 const xmlChar libeetExcNs[];
 const xmlChar libeetWsseNsPrefix[];
 const xmlChar libeetWsuNsPrefix[];
-
+const xmlChar libeetSoap11Ns[];
+const xmlChar libeetSoap12Ns[];
 
 
 /***************************
@@ -45,6 +46,39 @@ const xmlChar libeetNodeSecurityAttrEncodingTypeValue[];
 const xmlChar libeetSchema[];
 const xmlChar libeetSoapEnvelopePrefix[];
 const xmlChar libeetSoapHeaderPrefix[];
+
+#ifndef LIBEET_NO_SOAP
+/*************************************************************************
+ *
+ * SOAP 1.1/1.2 strings
+ *
+ ************************************************************************/
+const xmlChar libeetNodeEnvelope[];
+const xmlChar libeetNodeHeader[];
+const xmlChar libeetNodeBody[];
+const xmlChar libeetNodeFault[];
+const xmlChar libeetNodeFaultCode[];
+const xmlChar libeetNodeFaultString[];
+const xmlChar libeetNodeFaultActor[];
+const xmlChar libeetNodeFaultDetail[];
+const xmlChar libeetNodeCode[];
+const xmlChar libeetNodeReason[];
+const xmlChar libeetNodeNode[];
+const xmlChar libeetNodeRole[];
+const xmlChar libeetNodeDetail[];
+const xmlChar libeetNodeValue[];
+const xmlChar libeetNodeSubcode[];
+const xmlChar libeetNodeText[];
+
+const xmlChar libeetSoapFaultCodeVersionMismatch[];
+const xmlChar libeetSoapFaultCodeMustUnderstand[];
+const xmlChar libeetSoapFaultCodeClient[];
+const xmlChar libeetSoapFaultCodeServer[];
+const xmlChar libeetSoapFaultCodeReceiver[];
+const xmlChar libeetSoapFaultCodeSender[];
+const xmlChar libeetSoapFaultDataEncodningUnknown[];
+#endif /* LIBEET_NO_SOAP */
+
 
 static const xmlChar * PFXCERT_KEYNAME = BAD_CAST("p");
 static const xmlChar * RESPONSECERT_KEYNAME = BAD_CAST("responsecert");

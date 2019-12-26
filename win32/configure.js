@@ -60,6 +60,7 @@ var buildPlatform = "x86";
 var error = 0;
 
 /* libeet features. */
+var withOpenSSLVersion = "110";
 var withIconv = 1;
 
 /* Helper function, transforms the option variable into the 'Enabled'
@@ -151,7 +152,8 @@ function discoverVersion()
 	vf.WriteLine("APPS_SRCDIR=" + srcDirApps);
 	vf.WriteLine("BINDIR=" + binDir);
 	vf.WriteLine("UNICODE=" + (buildUnicode? "1" : "0"));
-  vf.WriteLine("WITH_ICONV=" + (withIconv ? "1" : "0"));
+    vf.WriteLine("WITH_OPENSSL_VERSION=XMLSEC_OPENSSL_" + withOpenSSLVersion);
+    vf.WriteLine("WITH_ICONV=" + (withIconv ? "1" : "0"));
 	vf.WriteLine("DEBUG=" + (buildDebug? "1" : "0"));
 	vf.WriteLine("STATIC=" + (buildStatic? "1" : "0"));
 	vf.WriteLine("PREFIX=" + buildPrefix);
@@ -400,17 +402,18 @@ txtOut += "----------------------------\n";
 txtOut += "\n";
 txtOut += "Win32 build configuration\n";
 txtOut += "-------------------------\n";
-txtOut += "           Unicode: " + boolToStr(buildUnicode) + "\n";
-txtOut += "     Debug symbols: " + boolToStr(buildDebug) + "\n";
-txtOut += "    Install prefix: " + buildPrefix + "\n";
-txtOut += "      Put tools in: " + buildBinPrefix + "\n";
-txtOut += "    Put headers in: " + buildIncPrefix + "\n";
-txtOut += "Put static libs in: " + buildLibPrefix + "\n";
-txtOut += "Put shared libs in: " + buildSoPrefix + "\n";
-txtOut += "      Include path: " + buildInclude + "\n";
-txtOut += "          Lib path: " + buildLib + "\n";
-txtOut += "  C-Runtime option: " + cruntime + "\n";
-txtOut += "           Static : " + boolToStr(buildStatic) + "\n";
+txtOut += "            Unicode: " + boolToStr(buildUnicode) + "\n";
+txtOut += "      Debug symbols: " + boolToStr(buildDebug) + "\n";
+txtOut += "     Install prefix: " + buildPrefix + "\n";
+txtOut += "       Put tools in: " + buildBinPrefix + "\n";
+txtOut += "     Put headers in: " + buildIncPrefix + "\n";
+txtOut += " Put static libs in: " + buildLibPrefix + "\n";
+txtOut += " Put shared libs in: " + buildSoPrefix + "\n";
+txtOut += "       Include path: " + buildInclude + "\n";
+txtOut += "           Lib path: " + buildLib + "\n";
+txtOut += "Use OpenSSL Version: " + withOpenSSLVersion + "\n";
+txtOut += "   C-Runtime option: " + cruntime + "\n";
+txtOut += "            Static : " + boolToStr(buildStatic) + "\n";
 WScript.Echo(txtOut);
 
 // Done.

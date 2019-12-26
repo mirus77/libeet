@@ -21,10 +21,11 @@ eetSignerSHA1(xmlSecByte *buf, xmlSecSize buflen, xmlSecByte ** outbuf, xmlSecSi
 	xmlSecAssert2(outbuf != NULL, -1);
 	xmlSecAssert2(outlen != NULL, -1);
 
-	EVP_MD_CTX *ctx;
+	EVP_MD_CTX *ctx = NULL;
 	int res = 0;
-
-	if ((ctx = EVP_MD_CTX_create()) == NULL)
+	
+	ctx = EVP_MD_CTX_new();
+	if (ctx == NULL)
 		handleErrors();
 
 	if (1 != EVP_DigestInit_ex(ctx, EVP_sha1(), NULL))
@@ -50,11 +51,10 @@ eetSignerSHA1(xmlSecByte *buf, xmlSecSize buflen, xmlSecByte ** outbuf, xmlSecSi
 		handleErrors();
 	}
 
-	md_size = ctx->digest->md_size;
-	(*outlen) = md_size;
-	(*outbuf) = xmlStrndup((xmlChar *)digest, md_size);
+	(*outlen) = digest_len;
+	(*outbuf) = xmlStrndup((xmlChar *)digest, digest_len);
 
-	EVP_MD_CTX_destroy(ctx);
+	EVP_MD_CTX_free(ctx);
 
 	return(res);
 }

@@ -6,14 +6,13 @@
 
 #include <xmlsec/xmlsec.h>
 #include <xmlsec/xmltree.h>
-#include <xmlsec/soap.h>
+#include <libeet/soap.h>
 #include <xmlsec/templates.h>
 #include <xmlsec/transforms.h>
 #include <xmlsec/xmldsig.h>
 #include <xmlsec/strings.h>
 #include <xmlsec/errors.h>
 
-#include "strings.h"
 #include "templates.h"
 
 
@@ -35,20 +34,20 @@ eetSignerTmplEnvelopeCreate(xmlDocPtr doc, const xmlChar *nsPrefix, const xmlCha
 	xmlSecAssert2(doc != NULL, NULL);
 	xmlSecAssert2(nsPrefix != NULL, NULL);
 
-	envNode = xmlNewDocNode(doc, NULL, xmlSecNodeEnvelope, NULL);
+	envNode = xmlNewDocNode(doc, NULL, libeetNodeEnvelope, NULL);
 	if (envNode != NULL){
-		ns = xmlNewNs(envNode, xmlSecSoap11Ns, nsPrefix);
+		ns = xmlNewNs(envNode, libeetSoap11Ns, nsPrefix);
 		if (NULL == ns){
 			xmlFreeNode(envNode);
 			return(NULL);
 		}
 		xmlSetNs(envNode, ns);
 
-		headerNode = xmlSecAddChild(envNode, xmlSecNodeHeader, NULL);
+		headerNode = xmlSecAddChild(envNode, libeetNodeHeader, NULL);
 		//ns = xmlNewNs(headerNode, xmlSecSoap11Ns, libeetSoapHeaderPrefix);
 		//xmlSetNs(headerNode, ns);
 
-		bodyNode = xmlSecAddChild(envNode, xmlSecNodeBody, xmlSecSoap11Ns);
+		bodyNode = xmlSecAddChild(envNode, libeetNodeBody, libeetSoap11Ns);
 		if (bodyNode != NULL){
 			ns = xmlNewNs(bodyNode, libeetWsuNs, libeetWsuNsPrefix);
 			if (NULL != idBody)

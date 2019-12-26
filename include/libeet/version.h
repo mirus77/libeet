@@ -11,13 +11,13 @@ extern "C" {
 * The library version string in the format
 * "<major-number>.<minor-number>.<sub-minor-number>".
 */
-#define LIBEET_VERSION			"1.0.3"
+#define LIBEET_VERSION			"1.0.4"
 
 #define LIBEET_VERSION_MAJOR	1
  
 #define LIBEET_VERSION_MINOR	0
  
-#define LIBEET_VERSION_SUBMINOR	3
+#define LIBEET_VERSION_SUBMINOR	4
 
 #ifdef __cplusplus
 }

@@ -8,6 +8,7 @@ extern "C" {
 
 #include <xmlsec/xmlsec.h>
 #include <libeet/libeet.h>
+#include <openssl/evp.h>
 
 	EET_EXPORT int eetSignerSHA1(xmlSecByte *buf, xmlSecSize buflen, xmlSecByte ** outbuf, xmlSecSize * outlen);
 	EET_EXPORT int eetSignerBase64Encode(xmlSecByte *buf, xmlSecSize buflen, xmlSecByte ** outbufp);

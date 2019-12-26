@@ -103,6 +103,7 @@ LIBEET_OBJS = \
 	$(LIBEET_INTDIR)\stdafx.obj \
 	$(LIBEET_INTDIR)\keysmngr.obj \
 	$(LIBEET_INTDIR)\strings.obj \
+	$(LIBEET_INTDIR)\soap.obj \
 	$(LIBEET_INTDIR)\templates.obj \
 	$(LIBEET_INTDIR)\errors.obj \
   $(LIBEET_INTDIR)\$(LIBEET_BASENAME).res
@@ -112,6 +113,7 @@ LIBEET_OBJS_A = \
 	$(LIBEET_INTDIR_A)\stdafx.obj \
 	$(LIBEET_INTDIR_A)\keysmngr.obj \
 	$(LIBEET_INTDIR_A)\strings.obj \
+	$(LIBEET_INTDIR_A)\soap.obj \
 	$(LIBEET_INTDIR_A)\errors.obj \
 	$(LIBEET_INTDIR_A)\templates.obj
 
@@ -173,9 +175,15 @@ LDFLAGS 		= $(LDFLAGS)
 #/OPT:NOWIN98
 !endif
 
+!if "$(WITH_OPENSSL_VERSION)" == "XMLSEC_OPENSSL_110"
+SOLIBS          = $(LIBS) libxmlsec-openssl_a.lib libcrypto_a.lib crypt32.lib libxmlsec_a.lib libxml2_a.lib libxslt_a.lib libexslt_a.lib wsock32.lib ws2_32.lib kernel32.lib user32.lib gdi32.lib advapi32.lib
+ALIBS           = $(LIBS) libxmlsec_a.lib libxml2_a.lib libxslt_a.lib crypt32.lib ws2_32.lib
+APP_LIBS		= libcrypto_a.lib libxmlsec-openssl_a.lib crypt32.lib kernel32.lib user32.lib gdi32.lib advapi32.lib ws2_32.lib
+!else
 SOLIBS 			= $(LIBS) libxmlsec-openssl_a.lib libeay32_a.lib crypt32.lib libxmlsec_a.lib libxml2_a.lib libxslt_a.lib libexslt_a.lib wsock32.lib ws2_32.lib kernel32.lib user32.lib gdi32.lib advapi32.lib
 ALIBS 			= $(LIBS) libxmlsec_a.lib libxml2_a.lib libxslt_a.lib crypt32.lib
 APP_LIBS		= libeay32_a.lib libxmlsec-openssl_a.lib crypt32.lib kernel32.lib user32.lib gdi32.lib advapi32.lib
+!endif
 
 !if "$(WITH_ICONV)" == "1"
 SOLIBS 			= $(SOLIBS) libiconv_a.lib
