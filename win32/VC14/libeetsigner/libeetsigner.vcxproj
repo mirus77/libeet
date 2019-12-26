@@ -177,6 +177,7 @@
     <ClInclude Include="..\..\..\include\libeet\exports.h" />
     <ClInclude Include="..\..\..\include\libeet\keysmngr.h" />
     <ClInclude Include="..\..\..\include\libeet\libeet.h" />
+    <ClInclude Include="..\..\..\include\libeet\soap.h" />
     <ClInclude Include="..\..\..\include\libeet\strings.h" />
     <ClInclude Include="..\..\..\include\libeet\version.h" />
     <ClInclude Include="..\..\..\src\globals.h" />
